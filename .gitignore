@@ -1,0 +1,4 @@
+.idea
+target
+src/main/frontend/generated
+src/main/frontend/index.html

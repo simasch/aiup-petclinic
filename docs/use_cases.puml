@@ -1,0 +1,53 @@
+@startuml Use Cases Overview
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Visitor" as visitor
+actor "Clinic User" as user
+
+rectangle "Spring PetClinic" {
+
+    package "General" {
+        usecase "UC-001\nView Welcome Page" as UC001
+        usecase "UC-002\nView Veterinarians" as UC002
+    }
+
+    package "Owner Management" {
+        usecase "UC-003\nRegister New Owner" as UC003
+        usecase "UC-004\nFind Owners by Last Name" as UC004
+        usecase "UC-005\nView Owner Details" as UC005
+        usecase "UC-006\nUpdate Owner" as UC006
+    }
+
+    package "Pet Management" {
+        usecase "UC-007\nAdd Pet to Owner" as UC007
+        usecase "UC-008\nUpdate Pet" as UC008
+    }
+
+    package "Visit Management" {
+        usecase "UC-009\nBook Visit for Pet" as UC009
+    }
+}
+
+' Visitor — anonymous, read-only access
+visitor --> UC001
+visitor --> UC002
+
+' Clinic User — inherits visitor access plus management use cases
+user --> UC001
+user --> UC002
+user --> UC003
+user --> UC004
+user --> UC005
+user --> UC006
+user --> UC007
+user --> UC008
+user --> UC009
+
+' Relationships
+UC007 ..> UC005 : <<extend>>
+UC008 ..> UC005 : <<extend>>
+UC009 ..> UC005 : <<extend>>
+UC006 ..> UC005 : <<extend>>
+
+@enduml

@@ -154,6 +154,25 @@
                         <artifactId>postgresql</artifactId>
                         <version>${postgresql.version}</version>
                     </dependency>
+                    <!-- Pin jOOQ codegen to match the runtime jOOQ bundled
+                         with Spring Boot 4.0.5, otherwise the generated
+                         sources use APIs from newer jOOQ that the runtime
+                         does not have. -->
+                    <dependency>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq</artifactId>
+                        <version>${jooq.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq-meta</artifactId>
+                        <version>${jooq.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq-codegen</artifactId>
+                        <version>${jooq.version}</version>
+                    </dependency>
                 </dependencies>
                 <executions>
                     <execution>

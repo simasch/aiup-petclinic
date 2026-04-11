@@ -16,7 +16,7 @@
 
 ## Main Success Scenario
 
-1. Clinic User clicks "Add New Pet" on the Owner Details page for the selected owner.
+1. Clinic User clicks "Add New Pet" on the Owner Details view for the selected owner.
 2. System displays the pet creation form, pre-populated with the owner's name and a drop-down of available pet types.
 3. Clinic User enters the pet's name, birth date, and selects a type, then submits the form.
 4. System validates that:
@@ -25,7 +25,7 @@
     - type is selected,
     - no other pet belonging to the same owner already has the same name.
 5. System attaches the new pet to the owner and persists the owner (cascading the pet insert).
-6. System redirects to the Owner Details page and displays the flash message "New Pet has been Added".
+6. System returns to the Owner Details view and displays the notification "New Pet has been Added".
 
 ## Alternative Flows
 
@@ -64,7 +64,7 @@
 ### Success Postconditions
 
 - A new `Pet` record exists linked to the owner via `owner_id`.
-- The user is viewing the Owner Details page showing the new pet.
+- The user is viewing the Owner Details view showing the new pet.
 
 ### Failure Postconditions
 

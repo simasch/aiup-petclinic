@@ -16,10 +16,9 @@
 ## Main Success Scenario
 
 1. Visitor clicks the "Veterinarians" link in the navigation bar.
-2. System retrieves the first page of veterinarians (5 per page) from the repository.
-3. System renders the veterinarians table showing, for each vet, the first name, last name, and a comma-separated list of specialties (or "none" if no specialties are held).
-4. System displays pagination controls showing the current page and total number of pages.
-5. Visitor may click a page number to browse additional pages; the system repeats steps 2–4 for the selected page.
+2. System retrieves the first chunk of veterinarians from the repository via a lazy data provider.
+3. System renders the veterinarians grid showing, for each vet, the first name, last name, and a comma-separated list of specialties (or "none" if no specialties are held).
+4. As the Visitor scrolls toward the end of the grid, the system fetches and appends the next chunk of veterinarians until all entries have been loaded.
 
 ## Alternative Flows
 
@@ -42,13 +41,13 @@
 
 ### Failure Postconditions
 
-- On data-access errors, an application error page is shown and no vet list is displayed.
+- On data-access errors, the application error view is shown and no vet list is displayed.
 
 ## Business Rules
 
-### BR-001: Page Size
+### BR-001: Lazy Loading
 
-The HTML view paginates the vet list at a fixed page size of 5 entries.
+The veterinarians grid is rendered with infinite scrolling: rows are fetched lazily from the backend as the user scrolls. There are no user-visible page controls and no fixed page size.
 
 ### BR-002: Specialty Ordering
 

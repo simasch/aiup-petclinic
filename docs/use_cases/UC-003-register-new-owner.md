@@ -15,12 +15,12 @@
 
 ## Main Success Scenario
 
-1. Clinic User chooses "Add Owner" from the Find Owners page.
+1. Clinic User chooses "Add Owner" from the Find Owners view.
 2. System displays an empty owner form with fields for first name, last name, address, city, and telephone.
 3. Clinic User fills in all fields and submits the form.
 4. System validates that first name, last name, address, city, and telephone are not blank and that telephone matches the 10-digit pattern.
 5. System persists the new owner, assigning it a new identifier.
-6. System redirects to the Owner Details page for the newly created owner and displays the flash message "New Owner Created".
+6. System navigates to the Owner Details view for the newly created owner and displays the notification "New Owner Created".
 
 ## Alternative Flows
 
@@ -30,7 +30,7 @@
 **Flow:**
 
 1. System re-renders the owner creation form with field-level error messages.
-2. System displays the flash message "There was an error in creating the owner."
+2. System displays the notification "There was an error in creating the owner."
 3. Clinic User corrects the input.
 4. Use case continues at step 3.
 

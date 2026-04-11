@@ -103,6 +103,10 @@
             <artifactId>testcontainers-postgresql</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>browserless-test-junit6</artifactId>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

@@ -15,9 +15,9 @@
 
 ## Main Success Scenario
 
-1. Clinic User navigates to `/owners/{ownerId}` (e.g., via a search result, a newly created owner, or a bookmark).
+1. Clinic User opens the Owner Details view for a given owner id (e.g., via a search result, a newly created owner, or a bookmark).
 2. System loads the owner by identifier together with their pets (eagerly) and each pet's visits (ordered by ascending date).
-3. System renders the Owner Details page showing:
+3. System renders the Owner Details view showing:
     - Owner: name, address, city, telephone.
     - Pets: name, birth date, type, and visits (date and description) for each pet.
 4. System offers action links: "Edit Owner", "Add New Pet", and for each pet "Edit Pet" and "Add Visit".
@@ -30,9 +30,8 @@
 **Trigger:** No owner exists with the requested identifier in step 2.
 **Flow:**
 
-1. System raises an `IllegalArgumentException` stating that the owner could not be found.
-2. The application error page is shown.
-3. Use case ends.
+1. System cannot resolve the owner and shows the application error view.
+2. Use case ends.
 
 ## Postconditions
 
@@ -43,7 +42,7 @@
 
 ### Failure Postconditions
 
-- Owner Details page is not rendered; an error page is shown instead.
+- Owner Details view is not rendered; the application error view is shown instead.
 
 ## Business Rules
 

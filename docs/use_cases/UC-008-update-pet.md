@@ -12,11 +12,11 @@
 
 - The PetClinic application is running.
 - The owner and the pet exist.
-- The Clinic User has navigated to the Owner Details page for the pet's owner.
+- The Clinic User has navigated to the Owner Details view for the pet's owner.
 
 ## Main Success Scenario
 
-1. Clinic User clicks "Edit Pet" next to the pet on the Owner Details page.
+1. Clinic User clicks "Edit Pet" next to the pet on the Owner Details view.
 2. System displays the pet edit form pre-filled with the pet's current name, birth date, and type.
 3. Clinic User amends one or more fields and submits the form.
 4. System validates that:
@@ -24,7 +24,7 @@
     - birth date is provided and is not in the future,
     - no other pet belonging to the same owner (with a different id) already has the same name.
 5. System updates the pet's properties (name, birth date, type) on the owner's in-memory pet collection and persists the owner.
-6. System redirects to the Owner Details page and displays the flash message "Pet details has been edited".
+6. System returns to the Owner Details view and displays the notification "Pet details has been edited".
 
 ## Alternative Flows
 
@@ -63,7 +63,7 @@
 ### Success Postconditions
 
 - The pet record reflects the updated name, birth date, and type.
-- The user is viewing the Owner Details page with the updated pet.
+- The user is viewing the Owner Details view with the updated pet.
 
 ### Failure Postconditions
 

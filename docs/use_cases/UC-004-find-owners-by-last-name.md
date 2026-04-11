@@ -18,8 +18,8 @@
 2. System displays the Find Owners form with a single "Last name" input field.
 3. Clinic User enters all or the beginning of an owner's last name and submits the form.
 4. System queries the owner repository using a "starts with" match on last name.
-5. System finds more than one matching owner and renders the paginated Owners List (5 owners per page) showing, for each owner, their name, address, city, telephone, and pets.
-6. Clinic User selects an owner from the list to navigate to the Owner Details page (UC-005).
+5. System finds more than one matching owner and renders the Owners List with infinite scrolling, showing, for each owner, their name, address, city, telephone, and pets.
+6. Clinic User selects an owner from the list to navigate to the Owner Details view (UC-005).
 
 ## Alternative Flows
 
@@ -28,7 +28,7 @@
 **Trigger:** Clinic User submits the form with an empty last-name field in step 3.
 **Flow:**
 
-1. System treats the empty string as a broadest-possible search and returns all owners, paginated.
+1. System treats the empty string as a broadest-possible search and returns all owners, lazily loaded as the user scrolls.
 2. Use case continues at step 5.
 
 ### A2: Exactly One Match
@@ -36,7 +36,7 @@
 **Trigger:** The "starts with" query returns exactly one owner in step 4.
 **Flow:**
 
-1. System redirects directly to the Owner Details page for that owner (UC-005).
+1. System navigates directly to the Owner Details view for that owner (UC-005).
 2. Use case ends.
 
 ### A3: No Match
@@ -49,13 +49,13 @@
 3. Clinic User adjusts the search term.
 4. Use case continues at step 3.
 
-### A4: Navigate Pagination
+### A4: Scroll Through Results
 
-**Trigger:** Result set spans multiple pages (step 5).
+**Trigger:** The result set is larger than what fits on screen (step 5).
 **Flow:**
 
-1. Clinic User clicks a page number.
-2. System fetches the requested page and re-renders the list.
+1. Clinic User scrolls toward the bottom of the Owners List.
+2. System fetches the next chunk of owners from the repository and appends them to the list.
 3. Use case continues at step 5 or 6.
 
 ## Postconditions
@@ -75,9 +75,9 @@
 
 Searches use a case-sensitive "starts with" match on last name; full-string matches are not required.
 
-### BR-002: Page Size
+### BR-002: Lazy Loading
 
-Owners list pagination uses a fixed page size of 5.
+The Owners List is rendered with infinite scrolling: rows are fetched lazily from the backend as the user scrolls. There are no user-visible page controls and no fixed page size.
 
 ### BR-003: Empty Search Returns All
 

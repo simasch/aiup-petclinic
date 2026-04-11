@@ -16,12 +16,12 @@
 
 ## Main Success Scenario
 
-1. Clinic User clicks "Add Visit" next to the pet on the Owner Details page.
+1. Clinic User clicks "Add Visit" next to the pet on the Owner Details view.
 2. System loads the owner and pet, then displays the visit form. The date field is pre-populated with today's date; the pet's name and previous visits are shown for context.
 3. Clinic User optionally adjusts the date, enters a description of the visit, and submits the form.
 4. System validates that the description is not blank.
 5. System adds the visit to the pet and persists the owner (cascading the visit insert via `pet_id`).
-6. System redirects to the Owner Details page and displays the flash message "Your visit has been booked".
+6. System returns to the Owner Details view and displays the notification "Your visit has been booked".
 
 ## Alternative Flows
 
@@ -36,33 +36,31 @@
 
 ### A2: Pet Not Owned by Given Owner
 
-**Trigger:** In step 2, the pet id in the URL does not correspond to any pet belonging to the owner.
+**Trigger:** In step 2, the supplied pet id does not correspond to any pet belonging to the owner.
 **Flow:**
 
-1. System raises an `IllegalArgumentException` indicating the pet cannot be found for the given owner.
-2. The application error page is shown.
-3. Use case ends.
+1. System cannot resolve the pet for the given owner and shows the application error view.
+2. Use case ends.
 
 ### A3: Owner Not Found
 
 **Trigger:** In step 2, no owner exists for the supplied owner id.
 **Flow:**
 
-1. System raises an `IllegalArgumentException` indicating the owner cannot be found.
-2. The application error page is shown.
-3. Use case ends.
+1. System cannot resolve the owner and shows the application error view.
+2. Use case ends.
 
 ## Postconditions
 
 ### Success Postconditions
 
 - A new `Visit` record exists, linked to the pet via `pet_id`.
-- The visit appears in the pet's visit history on the Owner Details page.
+- The visit appears in the pet's visit history on the Owner Details view.
 
 ### Failure Postconditions
 
 - No visit is persisted.
-- The visit form is redisplayed with validation errors, or the application error page is shown when the owner/pet cannot be resolved.
+- The visit form is redisplayed with validation errors, or the application error view is shown when the owner/pet cannot be resolved.
 
 ## Business Rules
 

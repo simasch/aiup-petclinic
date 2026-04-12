@@ -27,11 +27,16 @@ rectangle "Spring PetClinic" {
     package "Visit Management" {
         usecase "UC-009\nBook Visit for Pet" as UC009
     }
+
+    package "Error Handling" {
+        usecase "UC-010\nView Application Error" as UC010
+    }
 }
 
 ' Visitor — anonymous, read-only access
 visitor --> UC001
 visitor --> UC002
+visitor --> UC010
 
 ' Clinic User — inherits visitor access plus management use cases
 user --> UC001
@@ -43,6 +48,7 @@ user --> UC006
 user --> UC007
 user --> UC008
 user --> UC009
+user --> UC010
 
 ' Relationships
 UC007 ..> UC005 : <<extend>>

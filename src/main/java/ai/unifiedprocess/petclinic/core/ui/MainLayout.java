@@ -1,5 +1,7 @@
-package ai.unifiedprocess.petclinic.ui;
+package ai.unifiedprocess.petclinic.core.ui;
 
+import ai.unifiedprocess.petclinic.owner.ui.FindOwnersView;
+import ai.unifiedprocess.petclinic.vet.ui.VetsView;
 import ai.unifiedprocess.petclinic.welcome.ui.WelcomeView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -18,13 +20,13 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
  */
 public class MainLayout extends AppLayout {
 
-    final Image logo;
-    final H1 title;
-    final SideNav sideNav;
-    final SideNavItem homeLink;
-    final SideNavItem findOwnersLink;
-    final SideNavItem vetsLink;
-    final SideNavItem errorLink;
+    private final Image logo;
+    private final H1 title;
+    private final SideNav sideNav;
+    private final SideNavItem homeLink;
+    private final SideNavItem findOwnersLink;
+    private final SideNavItem vetsLink;
+    private final SideNavItem errorLink;
 
     public MainLayout() {
         logo = new Image("images/petclinic-logo.svg", "PetClinic logo");
@@ -42,9 +44,9 @@ public class MainLayout extends AppLayout {
         addToNavbar(header);
 
         homeLink = new SideNavItem("Home", WelcomeView.class);
-        findOwnersLink = new SideNavItem("Find Owners", "owners/find");
-        vetsLink = new SideNavItem("Veterinarians", "vets");
-        errorLink = new SideNavItem("Error", "oups");
+        findOwnersLink = new SideNavItem("Find Owners", FindOwnersView.class);
+        vetsLink = new SideNavItem("Veterinarians", VetsView.class);
+        errorLink = new SideNavItem("Error", CrashView.class);
 
         sideNav = new SideNav();
         sideNav.addItem(homeLink, findOwnersLink, vetsLink, errorLink);

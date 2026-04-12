@@ -1,9 +1,10 @@
-# Spring PetClinic 
+# AIUP PetClinic
 
 A demo project accompanying a talk on **Spec-Driven Development with the AI Unified Process (AIUP)**.
 
-It revisits the classic Spring PetClinic sample, but built from the ground up using specifications first — use cases, an
-entity model, and UI flows — and then letting AI assistants implement the code against those specs.
+It revisits the classic [Spring PetClinic](https://github.com/spring-projects/spring-petclinic) sample, but built from
+the ground up using specifications first — use cases, an entity model, and UI flows — and then letting AI assistants
+implement the code against those specs.
 
 ## AI Unified Process
 
@@ -18,6 +19,38 @@ drops the ceremony that doesn't. The result is a workflow where humans stay in c
 mechanical translation to code.
 
 This repository is the running example used in the talk.
+
+## Git tags
+
+The repository is tagged at key milestones so you can follow the progression of the talk step by step.
+
+| Tag                   | Description                                                                                                                 |
+|-----------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `initial`             | Project setup — Maven Wrapper, Spring Boot, Vaadin, Testcontainers, use case docs, and entity model. No implementation yet. |
+| `use-case-review`     | Refined use case specifications (infinite scrolling instead of pagination, terminology cleanup).                            |
+| `first-use-case`      | UC-001 implemented — welcome page, main layout with navigation menu, tests, and styling.                                    |
+| `full-implementation` | All use cases implemented with complete tests.                                                                              |
+
+To check out a specific tag:
+
+```bash
+git checkout <tag-name>
+
+# for example, start from the beginning:
+git checkout initial
+```
+
+This puts you in "detached HEAD" state, which is fine for browsing. To get back to the latest code:
+
+```bash
+git checkout main
+```
+
+If you want to experiment on top of a tag, create a branch from it:
+
+```bash
+git checkout -b my-experiment initial
+```
 
 ## Stack
 

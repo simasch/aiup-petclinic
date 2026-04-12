@@ -29,7 +29,8 @@
     </scm>
     <properties>
         <java.version>25</java.version>
-        <vaadin.version>25.1.0</vaadin.version>
+        <vaadin.version>25.1.1</vaadin.version>
+        <jooq.version>3.21.1</jooq.version>
         <testcontainers-jooq-codegen-maven-plugin.version>1.0.0</testcontainers-jooq-codegen-maven-plugin.version>
     </properties>
     <dependencies>
@@ -145,20 +146,6 @@
                 <version>${testcontainers-jooq-codegen-maven-plugin.version}</version>
                 <dependencies>
                     <dependency>
-                        <groupId>org.testcontainers</groupId>
-                        <artifactId>testcontainers-postgresql</artifactId>
-                        <version>${testcontainers.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>${postgresql.version}</version>
-                    </dependency>
-                    <!-- Pin jOOQ codegen to match the runtime jOOQ bundled
-                         with Spring Boot 4.0.5, otherwise the generated
-                         sources use APIs from newer jOOQ that the runtime
-                         does not have. -->
-                    <dependency>
                         <groupId>org.jooq</groupId>
                         <artifactId>jooq</artifactId>
                         <version>${jooq.version}</version>
@@ -172,6 +159,16 @@
                         <groupId>org.jooq</groupId>
                         <artifactId>jooq-codegen</artifactId>
                         <version>${jooq.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.testcontainers</groupId>
+                        <artifactId>testcontainers-postgresql</artifactId>
+                        <version>${testcontainers.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>${postgresql.version}</version>
                     </dependency>
                 </dependencies>
                 <executions>

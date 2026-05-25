@@ -32,9 +32,9 @@ class UC001ViewWelcomePageTest extends SpringBrowserlessTest {
         navigate(WelcomeView.class);
 
         assertDoesNotThrow(() -> $(Image.class)
-                .withPropertyValue(Image::getSrc, "images/pets.svg")
+                .withPropertyValue(Image::getSrc, "images/pets.png")
                 .single(),
-                "Expected exactly one decorative image with src 'images/pets.svg'");
+                "Expected exactly one decorative image with src 'images/pets.png'");
     }
 
     @Test

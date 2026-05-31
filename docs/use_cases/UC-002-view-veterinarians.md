@@ -10,15 +10,16 @@
 
 ## Preconditions
 
-- The PetClinic application is running.
 - At least one veterinarian exists in the database (otherwise the list is simply empty).
 
 ## Main Success Scenario
 
 1. Visitor clicks the "Veterinarians" link in the navigation bar.
 2. System retrieves the first chunk of veterinarians from the repository via a lazy data provider.
-3. System renders the veterinarians grid showing, for each vet, the first name, last name, and a comma-separated list of specialties (or "none" if no specialties are held).
-4. As the Visitor scrolls toward the end of the grid, the system fetches and appends the next chunk of veterinarians until all entries have been loaded.
+3. System renders the veterinarians grid showing, for each vet, the first name, last name, and a comma-separated list of
+   specialties (or "none" if no specialties are held).
+4. As the Visitor scrolls toward the end of the grid, the system fetches and appends the next chunk of veterinarians
+   until all entries have been loaded.
 
 ## Alternative Flows
 
@@ -47,7 +48,8 @@
 
 ### BR-001: Lazy Loading
 
-The veterinarians grid is rendered with infinite scrolling: rows are fetched lazily from the backend as the user scrolls. There are no user-visible page controls and no fixed page size.
+The veterinarians grid is rendered with infinite scrolling: rows are fetched lazily from the backend as the user
+scrolls. There are no user-visible page controls and no fixed page size.
 
 ### BR-002: Specialty Ordering
 

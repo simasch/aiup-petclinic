@@ -10,6 +10,8 @@ Read this **before writing or modifying any test** under `src/test/java/`.
 - View tests extend `PetClinicTestBase` (or `SpringBrowserlessTest` directly for tests that don't touch the DB) and are
   annotated `@SpringBootTest`.
   They run inside a Spring context and use the same Testcontainers Postgres as the rest of the integration tests.
+- **Use the `aiup-vaadin-jooq:browserless-test` skill** to scaffold a browserless test for a use case. Prefer it over
+  hand-rolling — it knows the conventions in this file (locators, `@UseCase`, naming, etc.).
 - **Karibu is gone.** Any `com.github.mvysny.kaributesting.*` import is a mistake — the project is all
   `SpringBrowserlessTest` / `ComponentQuery` now. The `karibu-test` skill is obsolete.
 

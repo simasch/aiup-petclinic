@@ -10,7 +10,6 @@
 
 ## Preconditions
 
-- The PetClinic application is running.
 - The user has navigated to the application and can reach the "Add Owner" screen (e.g., via the "Find Owners" page).
 
 ## Main Success Scenario
@@ -18,9 +17,11 @@
 1. Clinic User chooses "Add Owner" from the Find Owners view.
 2. System displays an empty owner form with fields for first name, last name, address, city, and telephone.
 3. Clinic User fills in all fields and submits the form.
-4. System validates that first name, last name, address, city, and telephone are not blank and that telephone matches the 10-digit pattern.
+4. System validates that first name, last name, address, city, and telephone are not blank and that telephone matches
+   the 10-digit pattern.
 5. System persists the new owner, assigning it a new identifier.
-6. System navigates to the Owner Details view for the newly created owner and displays the notification "New Owner Created".
+6. System navigates to the Owner Details view for the newly created owner and displays the notification "New Owner
+   Created".
 
 ## Alternative Flows
 

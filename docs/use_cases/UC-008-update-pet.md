@@ -10,7 +10,6 @@
 
 ## Preconditions
 
-- The PetClinic application is running.
 - The owner and the pet exist.
 - The Clinic User has navigated to the Owner Details view for the pet's owner.
 
@@ -23,7 +22,8 @@
     - name is not blank,
     - birth date is provided and is not in the future,
     - no other pet belonging to the same owner (with a different id) already has the same name.
-5. System updates the pet's properties (name, birth date, type) on the owner's in-memory pet collection and persists the owner.
+5. System updates the pet's properties (name, birth date, type) on the owner's in-memory pet collection and persists the
+   owner.
 6. System returns to the Owner Details view and displays the notification "Pet details has been edited".
 
 ## Alternative Flows

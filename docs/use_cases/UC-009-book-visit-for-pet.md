@@ -10,14 +10,14 @@
 
 ## Preconditions
 
-- The PetClinic application is running.
 - The owner exists.
 - The pet exists and belongs to the specified owner.
 
 ## Main Success Scenario
 
 1. Clinic User clicks "Add Visit" next to the pet on the Owner Details view.
-2. System loads the owner and pet, then displays the visit form. The date field is pre-populated with today's date; the pet's name and previous visits are shown for context.
+2. System loads the owner and pet, then displays the visit form. The date field is pre-populated with today's date; the
+   pet's name and previous visits are shown for context.
 3. Clinic User optionally adjusts the date, enters a description of the visit, and submits the form.
 4. System validates that the description is not blank.
 5. System adds the visit to the pet and persists the owner (cascading the visit insert via `pet_id`).
@@ -60,7 +60,8 @@
 ### Failure Postconditions
 
 - No visit is persisted.
-- The visit form is redisplayed with validation errors, or the application error view is shown when the owner/pet cannot be resolved.
+- The visit form is redisplayed with validation errors, or the application error view is shown when the owner/pet cannot
+  be resolved.
 
 ## Business Rules
 
@@ -74,4 +75,5 @@ If the user does not change the date field, the visit is recorded with today's d
 
 ### BR-003: Owner/Pet Consistency
 
-A visit can only be booked through the owner who owns the pet; the controller rejects the request if the pet id does not belong to the owner id in the URL.
+A visit can only be booked through the owner who owns the pet; the controller rejects the request if the pet id does not
+belong to the owner id in the URL.

@@ -5,12 +5,12 @@
 **Use Case ID:** UC-007   
 **Use Case Name:** Add Pet to Owner   
 **Primary Actor:** Clinic User   
-**Goal:** Register a new pet under an existing owner so that visits and medical information can subsequently be tracked for it.   
+**Goal:** Register a new pet under an existing owner so that visits and medical information can subsequently be tracked
+for it.   
 **Status:** Approved
 
 ## Preconditions
 
-- The PetClinic application is running.
 - The owner to which the pet will be added exists.
 - At least one pet type (e.g., cat, dog, hamster) is configured in the database.
 

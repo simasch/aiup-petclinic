@@ -92,6 +92,9 @@ Prefer these over ad-hoc generation:
   model.
 - `aiup-vaadin-jooq:implement` — implement a use case end-to-end (view +
   jOOQ queries). Already honours `docs/guidelines/architecture.md`.
+- `aiup-vaadin-jooq:browserless-test` — server-side Vaadin view tests
+  (`SpringBrowserlessTest`, `$()` locators). Default for UC tests; see
+  `docs/guidelines/testing.md`.
 - `aiup-vaadin-jooq:playwright-test` — browser-based end-to-end tests. For
   server-side tests, see `docs/guidelines/testing.md` (the `karibu-test`
   skill is obsolete).

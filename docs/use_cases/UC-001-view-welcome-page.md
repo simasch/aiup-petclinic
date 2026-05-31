@@ -5,12 +5,11 @@
 **Use Case ID:** UC-001   
 **Use Case Name:** View Welcome Page   
 **Primary Actor:** Visitor   
-**Goal:** Display the application's home page so the user can orient themselves and navigate to the main functional areas.   
+**Goal:** Display the application's home page so the user can orient themselves and navigate to the main functional
+areas.   
 **Status:** Approved
 
 ## Preconditions
-
-- The PetClinic web application is running and reachable over HTTP.
 
 ## Main Success Scenario
 
@@ -30,8 +29,6 @@ _None — the welcome page is static and takes no user input._
 - No application state is changed.
 
 ### Failure Postconditions
-
-- If the server is unavailable, the visitor's browser shows a transport error (handled outside the application).
 
 ## Business Rules
 

@@ -10,14 +10,14 @@
 
 ## Preconditions
 
-- The PetClinic application is running.
 - The owner to be updated exists.
 - The Clinic User has navigated to the Owner Details view for that owner (UC-005).
 
 ## Main Success Scenario
 
 1. Clinic User clicks "Edit Owner" on the Owner Details view.
-2. System loads the existing owner and displays the owner edit form, pre-filled with the current first name, last name, address, city, and telephone.
+2. System loads the existing owner and displays the owner edit form, pre-filled with the current first name, last name,
+   address, city, and telephone.
 3. Clinic User amends one or more fields and submits the form.
 4. System validates that all required fields are present and that telephone matches the 10-digit pattern.
 5. System persists the updated owner to the database.

@@ -10,13 +10,14 @@
 
 ## Preconditions
 
-- The PetClinic application is running.
 - An owner with the requested identifier exists in the database.
 
 ## Main Success Scenario
 
-1. Clinic User opens the Owner Details view for a given owner id (e.g., via a search result, a newly created owner, or a bookmark).
-2. System loads the owner by identifier together with their pets (eagerly) and each pet's visits (ordered by ascending date).
+1. Clinic User opens the Owner Details view for a given owner id (e.g., via a search result, a newly created owner, or a
+   bookmark).
+2. System loads the owner by identifier together with their pets (eagerly) and each pet's visits (ordered by ascending
+   date).
 3. System renders the Owner Details view showing:
     - Owner: name, address, city, telephone.
     - Pets: name, birth date, type, and visits (date and description) for each pet.

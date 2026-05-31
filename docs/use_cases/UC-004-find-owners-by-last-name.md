@@ -10,15 +10,14 @@
 
 ## Preconditions
 
-- The PetClinic application is running.
-
 ## Main Success Scenario
 
 1. Clinic User clicks "Find Owners" in the navigation bar.
 2. System displays the Find Owners form with a single "Last name" input field.
 3. Clinic User enters all or the beginning of an owner's last name and submits the form.
 4. System queries the owner repository using a "starts with" match on last name.
-5. System finds more than one matching owner and renders the Owners List with infinite scrolling, showing, for each owner, their name, address, city, telephone, and pets.
+5. System finds more than one matching owner and renders the Owners List with infinite scrolling, showing, for each
+   owner, their name, address, city, telephone, and pets.
 6. Clinic User selects an owner from the list to navigate to the Owner Details view (UC-005).
 
 ## Alternative Flows
@@ -28,7 +27,8 @@
 **Trigger:** Clinic User submits the form with an empty last-name field in step 3.
 **Flow:**
 
-1. System treats the empty string as a broadest-possible search and returns all owners, lazily loaded as the user scrolls.
+1. System treats the empty string as a broadest-possible search and returns all owners, lazily loaded as the user
+   scrolls.
 2. Use case continues at step 5.
 
 ### A2: Exactly One Match
@@ -77,7 +77,8 @@ Searches use a case-sensitive "starts with" match on last name; full-string matc
 
 ### BR-002: Lazy Loading
 
-The Owners List is rendered with infinite scrolling: rows are fetched lazily from the backend as the user scrolls. There are no user-visible page controls and no fixed page size.
+The Owners List is rendered with infinite scrolling: rows are fetched lazily from the backend as the user scrolls. There
+are no user-visible page controls and no fixed page size.
 
 ### BR-003: Empty Search Returns All
 

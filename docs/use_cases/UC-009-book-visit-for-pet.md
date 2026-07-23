@@ -6,7 +6,7 @@
 **Use Case Name:** Book Visit for Pet   
 **Primary Actor:** Clinic User   
 **Goal:** Record a veterinary visit for an existing pet, documenting the date and the reason for the appointment.   
-**Status:** Tested
+**Status:** Done
 
 ## Preconditions
 

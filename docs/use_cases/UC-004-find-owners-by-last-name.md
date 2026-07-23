@@ -6,7 +6,7 @@
 **Use Case Name:** Find Owners by Last Name   
 **Primary Actor:** Clinic User   
 **Goal:** Locate one or more owners by their last name so their details can be reviewed or edited.   
-**Status:** Tested
+**Status:** Done
 
 ## Preconditions
 

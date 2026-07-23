@@ -7,7 +7,7 @@
 **Primary Actor:** Clinic User   
 **Goal:** Register a new pet under an existing owner so that visits and medical information can subsequently be tracked
 for it.   
-**Status:** Tested
+**Status:** Done
 
 ## Preconditions
 

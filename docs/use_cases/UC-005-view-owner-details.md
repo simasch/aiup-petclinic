@@ -6,7 +6,7 @@
 **Use Case Name:** View Owner Details   
 **Primary Actor:** Clinic User   
 **Goal:** Inspect an owner's contact information together with the list of their pets and each pet's visit history.   
-**Status:** Tested
+**Status:** Done
 
 ## Preconditions
 

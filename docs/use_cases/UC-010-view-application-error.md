@@ -6,7 +6,7 @@
 **Use Case Name:** View Application Error   
 **Primary Actor:** Visitor (and Clinic User, via any failure flow)   
 **Goal:** Present a friendly error page whenever an unexpected failure occurs during navigation, so users are never shown a raw technical error. Also reachable on demand via the "Error" drawer link, which mirrors the Spring PetClinic `/oups` demonstration page.   
-**Status:** Tested
+**Status:** Done
 
 ## Preconditions
 

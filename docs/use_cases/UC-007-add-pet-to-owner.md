@@ -7,7 +7,7 @@
 **Primary Actor:** Clinic User   
 **Goal:** Register a new pet under an existing owner so that visits and medical information can subsequently be tracked
 for it.   
-**Status:** Approved
+**Status:** Tested
 
 ## Preconditions
 
@@ -24,7 +24,7 @@ for it.
     - birth date is provided and is not in the future,
     - type is selected,
     - no other pet belonging to the same owner already has the same name.
-5. System attaches the new pet to the owner and persists the owner (cascading the pet insert).
+5. System records the new pet under the owner.
 6. System returns to the Owner Details view and displays the notification "New Pet has been Added".
 
 ## Alternative Flows
@@ -63,7 +63,7 @@ for it.
 
 ### Success Postconditions
 
-- A new `Pet` record exists linked to the owner via `owner_id`.
+- A new pet record exists, linked to the owner.
 - The user is viewing the Owner Details view showing the new pet.
 
 ### Failure Postconditions

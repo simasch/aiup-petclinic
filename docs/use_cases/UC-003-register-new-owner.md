@@ -6,7 +6,7 @@
 **Use Case Name:** Register New Owner   
 **Primary Actor:** Clinic User   
 **Goal:** Add a new pet owner to the clinic so that their pets and visits can subsequently be tracked.   
-**Status:** Approved
+**Status:** Tested
 
 ## Preconditions
 
@@ -27,7 +27,7 @@
 
 ### A1: Validation Errors
 
-**Trigger:** One or more fields fail validation in step 4 (blank field or telephone not matching `\d{10}`).
+**Trigger:** One or more fields fail validation — a blank field or a telephone that is not exactly 10 digits (step 4).
 **Flow:**
 
 1. System re-renders the owner creation form with field-level error messages.
@@ -55,7 +55,7 @@ First name, last name, address, city, and telephone are required.
 
 ### BR-002: Telephone Format
 
-Telephone must be exactly 10 digits (regex `\d{10}`).
+Telephone must be exactly 10 digits.
 
 ### BR-003: Server-Assigned Identifier
 

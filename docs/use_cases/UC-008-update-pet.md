@@ -6,7 +6,7 @@
 **Use Case Name:** Update Pet   
 **Primary Actor:** Clinic User   
 **Goal:** Modify the details of an existing pet (name, birth date, or type).   
-**Status:** Approved
+**Status:** Tested
 
 ## Preconditions
 
@@ -22,8 +22,7 @@
     - name is not blank,
     - birth date is provided and is not in the future,
     - no other pet belonging to the same owner (with a different id) already has the same name.
-5. System updates the pet's properties (name, birth date, type) on the owner's in-memory pet collection and persists the
-   owner.
+5. System stores the updated pet details (name, birth date, type).
 6. System returns to the Owner Details view and displays the notification "Pet details has been edited".
 
 ## Alternative Flows
@@ -82,4 +81,4 @@ A pet's birth date must not be after today.
 
 ### BR-003: Pet Type on Update
 
-Type may be left unchanged on update; the pet validator only enforces a type when the pet is new.
+Type may be left unchanged on update; a type is only enforced when the pet is first created.

@@ -7,7 +7,7 @@
 **Primary Actor:** Visitor   
 **Goal:** Display the application's home page so the user can orient themselves and navigate to the main functional
 areas.   
-**Status:** Approved
+**Status:** Tested
 
 ## Preconditions
 
@@ -19,7 +19,13 @@ areas.
 
 ## Alternative Flows
 
-_None — the welcome page is static and takes no user input._
+### A1: Page Fails to Render
+
+**Trigger:** An unexpected failure occurs while the system renders the welcome page (step 2).
+**Flow:**
+
+1. System shows the application error view instead (UC-010).
+2. Use case ends.
 
 ## Postconditions
 
@@ -29,6 +35,9 @@ _None — the welcome page is static and takes no user input._
 - No application state is changed.
 
 ### Failure Postconditions
+
+- The welcome page is not shown; the application error view is displayed instead (UC-010).
+- No application state is changed.
 
 ## Business Rules
 

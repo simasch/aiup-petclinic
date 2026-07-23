@@ -6,7 +6,7 @@
 **Use Case Name:** Find Owners by Last Name   
 **Primary Actor:** Clinic User   
 **Goal:** Locate one or more owners by their last name so their details can be reviewed or edited.   
-**Status:** Approved
+**Status:** Tested
 
 ## Preconditions
 
@@ -15,7 +15,7 @@
 1. Clinic User clicks "Find Owners" in the navigation bar.
 2. System displays the Find Owners form with a single "Last name" input field.
 3. Clinic User enters all or the beginning of an owner's last name and submits the form.
-4. System queries the owner repository using a "starts with" match on last name.
+4. System searches for owners using a "starts with" match on last name.
 5. System finds more than one matching owner and renders the Owners List with infinite scrolling, showing, for each
    owner, their name, address, city, telephone, and pets.
 6. Clinic User selects an owner from the list to navigate to the Owner Details view (UC-005).
@@ -24,7 +24,7 @@
 
 ### A1: Empty Last-Name Search
 
-**Trigger:** Clinic User submits the form with an empty last-name field in step 3.
+**Trigger:** Clinic User submits the form with an empty last-name field (step 3).
 **Flow:**
 
 1. System treats the empty string as a broadest-possible search and returns all owners, lazily loaded as the user
@@ -33,7 +33,7 @@
 
 ### A2: Exactly One Match
 
-**Trigger:** The "starts with" query returns exactly one owner in step 4.
+**Trigger:** The "starts with" search returns exactly one owner (step 4).
 **Flow:**
 
 1. System navigates directly to the Owner Details view for that owner (UC-005).
@@ -41,7 +41,7 @@
 
 ### A3: No Match
 
-**Trigger:** The query returns no owners in step 4.
+**Trigger:** The search returns no owners (step 4).
 **Flow:**
 
 1. System re-renders the Find Owners form.
@@ -55,8 +55,8 @@
 **Flow:**
 
 1. Clinic User scrolls toward the bottom of the Owners List.
-2. System fetches the next chunk of owners from the repository and appends them to the list.
-3. Use case continues at step 5 or 6.
+2. System fetches the next set of owners and appends them to the list.
+3. Use case continues at step 6.
 
 ## Postconditions
 

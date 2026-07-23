@@ -6,16 +6,16 @@
 **Use Case Name:** View Veterinarians   
 **Primary Actor:** Visitor   
 **Goal:** Browse the list of veterinarians employed at the clinic along with their specialties.   
-**Status:** Approved
+**Status:** Tested
 
 ## Preconditions
 
-- At least one veterinarian exists in the database (otherwise the list is simply empty).
+- At least one veterinarian is recorded in the system (see A1 otherwise).
 
 ## Main Success Scenario
 
 1. Visitor clicks the "Veterinarians" link in the navigation bar.
-2. System retrieves the first chunk of veterinarians from the repository via a lazy data provider.
+2. System retrieves the first set of veterinarians.
 3. System renders the veterinarians grid showing, for each vet, the first name, last name, and a comma-separated list of
    specialties (or "none" if no specialties are held).
 4. As the Visitor scrolls toward the end of the grid, the system fetches and appends the next chunk of veterinarians
@@ -23,21 +23,19 @@
 
 ## Alternative Flows
 
-### A1: Request Vets as JSON/XML
+### A1: No Veterinarians Registered
 
-**Trigger:** A client requests `/vets` (without `.html`) expecting a machine-readable representation.
+**Trigger:** The clinic has no veterinarians recorded (step 2).
 **Flow:**
 
-1. System loads all veterinarians from the repository.
-2. System wraps them in a `Vets` container object.
-3. System returns the collection serialized as JSON or XML (content-negotiated).
-4. Use case ends.
+1. System renders the veterinarians grid with no rows.
+2. Use case ends.
 
 ## Postconditions
 
 ### Success Postconditions
 
-- The requested page (or full list) of veterinarians is rendered or returned to the caller.
+- The veterinarians grid is rendered with all loaded entries.
 - No data is modified.
 
 ### Failure Postconditions

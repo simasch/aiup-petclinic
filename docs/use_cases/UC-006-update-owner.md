@@ -6,7 +6,7 @@
 **Use Case Name:** Update Owner   
 **Primary Actor:** Clinic User   
 **Goal:** Modify an existing owner's contact information.   
-**Status:** Approved
+**Status:** Tested
 
 ## Preconditions
 
@@ -27,7 +27,7 @@
 
 ### A1: Validation Errors
 
-**Trigger:** One or more fields fail validation in step 4.
+**Trigger:** One or more fields fail validation (step 4).
 **Flow:**
 
 1. System re-renders the owner edit form with field error messages.
@@ -55,4 +55,4 @@ First name, last name, address, city, and telephone remain required on update.
 
 ### BR-002: Telephone Format
 
-Telephone must be exactly 10 digits (regex `\d{10}`).
+Telephone must be exactly 10 digits.

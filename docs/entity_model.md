@@ -22,7 +22,9 @@ Represents a pet owner who is registered with the clinic and can bring pets in f
 | last_name  | Owner's last name                | String    | 30               | Not Null                 |
 | address    | Street address of the owner      | String    | 255              | Not Null                 |
 | city       | City of residence                | String    | 80               | Not Null                 |
-| telephone  | Contact phone number (10 digits) | String    | 20               | Not Null, Format: \d{10} |
+| telephone  | Contact phone number (10 digits) | String    | 20               | Not Null                 |
+
+**Constraints:** Telephone must be exactly 10 digits.
 
 ### PET
 
@@ -33,8 +35,8 @@ Represents an animal belonging to an owner that can be the subject of veterinary
 | id         | Unique identifier                   | Integer   | 10               | Primary Key, Sequence             |
 | name       | Name of the pet                     | String    | 30               | Not Null                          |
 | birth_date | Date of birth of the pet            | Date      | -                | Optional                          |
-| type_id    | Reference to the pet type (species) | Integer   | 10               | Not Null, Foreign Key (TYPES.id)  |
-| owner_id   | Reference to the owning owner       | Integer   | 10               | Not Null, Foreign Key (OWNERS.id) |
+| type_id    | Reference to the pet type (species) | Integer   | 10               | Not Null, Foreign Key (PET_TYPE.id) |
+| owner_id   | Reference to the owning owner       | Integer   | 10               | Not Null, Foreign Key (OWNER.id)    |
 
 **Constraints:** A pet's name must be unique within the scope of its owner. Birth date must not be in the future.
 
@@ -56,7 +58,7 @@ Represents a veterinary visit booked for a specific pet, documenting the reason 
 | id          | Unique identifier                                     | Integer   | 10               | Primary Key, Sequence           |
 | visit_date  | Date of the visit (UI defaults to today when booking) | Date      | -                | Not Null                        |
 | description | Description of the visit purpose                      | String    | 255              | Not Null                        |
-| pet_id      | Reference to the pet being visited                    | Integer   | 10               | Not Null, Foreign Key (PETS.id) |
+| pet_id      | Reference to the pet being visited                    | Integer   | 10               | Not Null, Foreign Key (PET.id) |
 
 ### VET
 
@@ -83,16 +85,7 @@ Join entity that associates veterinarians with the specialties they hold (many-t
 
 | Attribute    | Description                     | Data Type | Length/Precision | Validation Rules                       |
 |--------------|---------------------------------|-----------|------------------|----------------------------------------|
-| vet_id       | Reference to the veterinarian   | Integer   | 10               | Not Null, Foreign Key (VETS.id)        |
-| specialty_id | Reference to the specialty held | Integer   | 10               | Not Null, Foreign Key (SPECIALTIES.id) |
+| vet_id       | Reference to the veterinarian   | Integer   | 10               | Not Null, Foreign Key (VET.id)       |
+| specialty_id | Reference to the specialty held | Integer   | 10               | Not Null, Foreign Key (SPECIALTY.id) |
 
 **Constraints:** The combination of vet_id and specialty_id is unique (composite primary key).
-
-## Validation enforcement
-
-Validation rules in the tables above are enforced at two layers:
-
-- **Database (Flyway schema):** NOT NULL, UNIQUE, length limits, foreign keys, and composite-key constraints.
-- **UI form layer (Vaadin):** format checks (e.g. `telephone` must match `\d{10}`) and business rules (e.g. "birth date
-  must not be in the future"). The jOOQ domain records intentionally carry no validation annotations — forms validate
-  via their `validateAndRead()` method before calling a repository.

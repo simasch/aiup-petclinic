@@ -1,0 +1,97 @@
+# AIUP Studio - KI-gestuetzte Artefakt-Generierung (UC-033 bis UC-037).
+#
+# Diese Datei wird vom AIUP Studio bei der Einrichtung angelegt (UC-042 BR-001) und
+# sollte nicht von Hand geaendert werden - das Studio vergleicht sie mit seiner Vorlage
+# und bietet bei Abweichung die Aktualisierung an (UC-042 A2).
+#
+# Ausgeloest wird der Workflow ueber workflow_dispatch aus dem Studio. Er fuehrt den
+# gewaehlten Skill des Plugins aiup-core aus und stellt das Ergebnis als Pull Request
+# bereit (UC-033 BR-003); direkt auf einen Branch geschrieben wird nie.
+name: AIUP Generate
+
+# Die Korrelations-ID steht im Namen des Laufs, damit das Studio den von ihm
+# ausgeloesten Lauf wiederfindet: workflow_dispatch liefert selbst keine Run-ID.
+run-name: AIUP ${{ inputs.skill }} ${{ inputs.correlation_id }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      skill:
+        description: Auszufuehrender aiup-core-Skill
+        required: true
+        # Feste Auswahl statt freier Text: der Wert wird in den Prompt eingesetzt.
+        type: choice
+        options:
+          - requirements
+          - use-case-diagram
+          - use-case-spec
+          - entity-model
+          - reverse-engineer
+      subject:
+        description: Artefakt oder Use-Case-ID, auf die sich der Skill bezieht
+        required: false
+        type: string
+      correlation_id:
+        description: Kennung des Laufs aus dem Studio
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# Ein Lauf je Repository; das Studio verhindert parallele Laeufe zusaetzlich selbst
+# (UC-033 BR-005).
+concurrency:
+  group: aiup-generate
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    # UC-033 BR-007: ein Lauf ohne Ergebnis gilt nach 30 Minuten als fehlgeschlagen.
+    timeout-minutes: 30
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Skill ausfuehren
+        uses: anthropics/claude-code-action@v1
+        with:
+          # Zwei Wege zum KI-Zugang, es genuegt einer: ein API-Schluessel aus der
+          # Anthropic Console oder - bei einem Claude-Abo - das Token aus
+          # `claude setup-token`. Das jeweils nicht hinterlegte Secret ist leer und
+          # wird von der Action ignoriert.
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          plugin_marketplaces: https://github.com/AI-Unified-Process/marketplace.git
+          plugins: aiup-core@ai-unified-process-marketplace
+          prompt: /aiup-core:${{ inputs.skill }} ${{ inputs.subject }}
+          # git bleibt gesperrt: die Aenderungen sollen im Arbeitsverzeichnis liegen
+          # bleiben, damit der naechste Schritt daraus einen Pull Request macht.
+          claude_args: |
+            --max-turns 40
+            --disallowedTools Bash(git:*)
+
+      - name: Ergebnis als Pull Request bereitstellen
+        id: pr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: aiup/${{ inputs.skill }}-${{ inputs.correlation_id }}
+          delete-branch: true
+          title: "AIUP: ${{ inputs.skill }}"
+          commit-message: "AIUP: ${{ inputs.skill }} ${{ inputs.subject }}"
+          body: |
+            Erzeugt vom AIUP Studio mit dem Skill `aiup-core:${{ inputs.skill }}`.
+
+            Der Inhalt ist ein Vorschlag und vor der Uebernahme zu pruefen.
+
+            aiup-run: ${{ inputs.correlation_id }}
+
+      - name: Ergebnis zusammenfassen
+        run: |
+          if [ -n "${{ steps.pr.outputs.pull-request-number }}" ]; then
+            echo "Pull Request #${{ steps.pr.outputs.pull-request-number }}: ${{ steps.pr.outputs.pull-request-url }}" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Der Skill hat keine Aenderungen erzeugt; es wurde kein Pull Request angelegt." >> "$GITHUB_STEP_SUMMARY"
+          fi

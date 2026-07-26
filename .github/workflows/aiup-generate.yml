@@ -70,6 +70,9 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  # The Claude Code action exchanges an OIDC token for its GitHub token; without this
+  # the run fails before the skill starts.
+  id-token: write
 
 # One run per repository; the Studio prevents parallel runs on its side as well
 # (UC-033 BR-005).

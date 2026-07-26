@@ -114,10 +114,19 @@ jobs:
             aiup-vaadin-jooq@ai-unified-process-marketplace
             aiup-angular-jpa@ai-unified-process-marketplace
           prompt: /${{ inputs.plugin }}:${{ inputs.skill }} ${{ inputs.subject }}
+          # The permission mode has to be set here: the action only grants it in its tag
+          # mode (@claude in a comment), and a workflow_dispatch run is its agent mode,
+          # where nothing but these arguments applies. Without it the skill is allowed to
+          # read but not to write, and the run ends successfully without a single changed
+          # file. Bypassing rather than accepting the edits because the code and test
+          # skills verify their result with Maven, and that is a Bash call.
+          #
           # git stays blocked: the changes are meant to stay in the working directory so
-          # that the next step can turn them into a pull request.
+          # that the next step can turn them into a pull request. The deny rule outranks
+          # the permission mode, so the block holds.
           claude_args: |
             --max-turns ${{ inputs.max_turns }}
+            --permission-mode bypassPermissions
             --disallowedTools Bash(git:*)
 
       - name: Provide the result as a pull request

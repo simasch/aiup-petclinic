@@ -1,25 +1,37 @@
-# AIUP Studio - KI-gestuetzte Artefakt-Generierung (UC-033 bis UC-037).
+# AIUP Studio - AI-assisted generation (UC-033 to UC-037, UC-044, UC-045).
 #
-# Diese Datei wird vom AIUP Studio bei der Einrichtung angelegt (UC-042 BR-001) und
-# sollte nicht von Hand geaendert werden - das Studio vergleicht sie mit seiner Vorlage
-# und bietet bei Abweichung die Aktualisierung an (UC-042 A2).
+# This file is created by the AIUP Studio during the setup (UC-042 BR-001) and should not
+# be edited by hand - the Studio compares it against its template and offers the update
+# when the two differ (UC-042 A2).
 #
-# Ausgeloest wird der Workflow ueber workflow_dispatch aus dem Studio. Er fuehrt den
-# gewaehlten Skill des Plugins aiup-core aus und stellt das Ergebnis als Pull Request
-# bereit (UC-033 BR-003); direkt auf einen Branch geschrieben wird nie.
+# The Studio triggers the workflow through workflow_dispatch. It runs the chosen skill of
+# the chosen plugin and provides the result as a pull request (UC-033 BR-003); nothing is
+# ever written to a branch directly.
 name: AIUP Generate
 
-# Die Korrelations-ID steht im Namen des Laufs, damit das Studio den von ihm
-# ausgeloesten Lauf wiederfindet: workflow_dispatch liefert selbst keine Run-ID.
+# The correlation id is part of the run name so the Studio finds the run it triggered:
+# workflow_dispatch does not return a run id of its own.
 run-name: AIUP ${{ inputs.skill }} ${{ inputs.correlation_id }}
 
 on:
   workflow_dispatch:
     inputs:
-      skill:
-        description: Auszufuehrender aiup-core-Skill
+      plugin:
+        description: Plugin the skill belongs to
         required: true
-        # Feste Auswahl statt freier Text: der Wert wird in den Prompt eingesetzt.
+        # The name alone is not enough: flyway-migration, implement and playwright-test
+        # exist in both stack plugins and mean different work in each.
+        type: choice
+        options:
+          - aiup-core
+          - aiup-vaadin-jooq
+          - aiup-angular-jpa
+      skill:
+        description: Skill to run
+        required: true
+        # A fixed choice rather than free text: the value goes into the prompt. This is
+        # the union of the skills of all plugins; the Studio only sends a combination
+        # that exists in the chosen plugin.
         type: choice
         options:
           - requirements
@@ -27,20 +39,39 @@ on:
           - use-case-spec
           - entity-model
           - reverse-engineer
+          - flyway-migration
+          - implement
+          - browserless-test
+          - spring-boot-test
+          - vitest-test
+          - playwright-test
       subject:
-        description: Artefakt oder Use-Case-ID, auf die sich der Skill bezieht
+        description: Artifact or use case id the skill applies to
         required: false
         type: string
       correlation_id:
-        description: Kennung des Laufs aus dem Studio
+        description: Id of the run from the Studio
         required: true
+        type: string
+      max_turns:
+        # UC-033 BR-007: a document skill writes one artifact out of another and is done
+        # in a few dozen turns; code and tests need considerably more. The Studio sets
+        # the value to match the skill.
+        description: Upper limit of turns in Claude Code
+        required: false
+        default: "40"
+        type: string
+      timeout_minutes:
+        description: Upper limit of the run time in minutes
+        required: false
+        default: "30"
         type: string
 
 permissions:
   contents: write
   pull-requests: write
 
-# Ein Lauf je Repository; das Studio verhindert parallele Laeufe zusaetzlich selbst
+# One run per repository; the Studio prevents parallel runs on its side as well
 # (UC-033 BR-005).
 concurrency:
   group: aiup-generate
@@ -49,31 +80,38 @@ concurrency:
 jobs:
   generate:
     runs-on: ubuntu-latest
-    # UC-033 BR-007: ein Lauf ohne Ergebnis gilt nach 30 Minuten als fehlgeschlagen.
-    timeout-minutes: 30
+    # UC-033 BR-007: after this, a run without a result counts as failed. The Studio
+    # applies the same deadline, so the run stops costing at the moment the Studio gives
+    # up on it.
+    timeout-minutes: ${{ fromJSON(inputs.timeout_minutes) }}
     steps:
-      - name: Repository auschecken
+      - name: Check out the repository
         uses: actions/checkout@v4
 
-      - name: Skill ausfuehren
+      - name: Run the skill
         uses: anthropics/claude-code-action@v1
         with:
-          # Zwei Wege zum KI-Zugang, es genuegt einer: ein API-Schluessel aus der
-          # Anthropic Console oder - bei einem Claude-Abo - das Token aus
-          # `claude setup-token`. Das jeweils nicht hinterlegte Secret ist leer und
-          # wird von der Action ignoriert.
+          # Two ways to the AI access, one of them is enough: an API key from the
+          # Anthropic Console or - with a Claude subscription - the token from
+          # `claude setup-token`. Whichever secret is not set stays empty and is
+          # ignored by the action.
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           plugin_marketplaces: https://github.com/AI-Unified-Process/marketplace.git
-          plugins: aiup-core@ai-unified-process-marketplace
-          prompt: /aiup-core:${{ inputs.skill }} ${{ inputs.subject }}
-          # git bleibt gesperrt: die Aenderungen sollen im Arbeitsverzeichnis liegen
-          # bleiben, damit der naechste Schritt daraus einen Pull Request macht.
+          # All plugins are installed, only the chosen one runs: telling them apart
+          # would cost an extra step to save a few seconds of installation time.
+          plugins: |
+            aiup-core@ai-unified-process-marketplace
+            aiup-vaadin-jooq@ai-unified-process-marketplace
+            aiup-angular-jpa@ai-unified-process-marketplace
+          prompt: /${{ inputs.plugin }}:${{ inputs.skill }} ${{ inputs.subject }}
+          # git stays blocked: the changes are meant to stay in the working directory so
+          # that the next step can turn them into a pull request.
           claude_args: |
-            --max-turns 40
+            --max-turns ${{ inputs.max_turns }}
             --disallowedTools Bash(git:*)
 
-      - name: Ergebnis als Pull Request bereitstellen
+      - name: Provide the result as a pull request
         id: pr
         uses: peter-evans/create-pull-request@v7
         with:
@@ -82,16 +120,16 @@ jobs:
           title: "AIUP: ${{ inputs.skill }}"
           commit-message: "AIUP: ${{ inputs.skill }} ${{ inputs.subject }}"
           body: |
-            Erzeugt vom AIUP Studio mit dem Skill `aiup-core:${{ inputs.skill }}`.
+            Generated by the AIUP Studio with the skill `${{ inputs.plugin }}:${{ inputs.skill }}`.
 
-            Der Inhalt ist ein Vorschlag und vor der Uebernahme zu pruefen.
+            The content is a proposal and is to be reviewed before it is taken over.
 
             aiup-run: ${{ inputs.correlation_id }}
 
-      - name: Ergebnis zusammenfassen
+      - name: Summarise the result
         run: |
           if [ -n "${{ steps.pr.outputs.pull-request-number }}" ]; then
-            echo "Pull Request #${{ steps.pr.outputs.pull-request-number }}: ${{ steps.pr.outputs.pull-request-url }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "Pull request #${{ steps.pr.outputs.pull-request-number }}: ${{ steps.pr.outputs.pull-request-url }}" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "Der Skill hat keine Aenderungen erzeugt; es wurde kein Pull Request angelegt." >> "$GITHUB_STEP_SUMMARY"
+            echo "The skill produced no changes; no pull request was created." >> "$GITHUB_STEP_SUMMARY"
           fi

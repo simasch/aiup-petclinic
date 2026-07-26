@@ -100,6 +100,12 @@ jobs:
           # ignored by the action.
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # The Studio dispatches the workflow with the token of its GitHub App, so the
+          # actor is a bot (`aiup-studio[bot]`, or whatever the app of a self-hosted
+          # Studio is called) and the action would refuse to start. The name of the app
+          # is not fixed, hence every bot is allowed: the only trigger is
+          # workflow_dispatch, and GitHub grants that to write access only.
+          allowed_bots: "*"
           plugin_marketplaces: https://github.com/AI-Unified-Process/marketplace.git
           # All plugins are installed, only the chosen one runs: telling them apart
           # would cost an extra step to save a few seconds of installation time.

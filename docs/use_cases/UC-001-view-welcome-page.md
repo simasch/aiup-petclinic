@@ -6,7 +6,7 @@
 **Use Case Name:** View Welcome Page   
 **Primary Actor:** Visitor   
 **Goal:** Display the application's home page so the user can orient themselves and navigate to the main functional areas.   
-**Status:** Done
+**Status:** Approved
 
 ## Preconditions
 
@@ -14,7 +14,7 @@
 ## Main Success Scenario
 
 1. Visitor navigates to the root URL (`/`) of the PetClinic application.
-2. System renders the welcome page with the clinic logo, a decorative image, and the main navigation bar. And shows a link to https://unifiedprocess.ai below.
+2. System renders the welcome page with the clinic logo, a decorative image, and the main navigation bar.
 3. Visitor sees navigation links for Home, Find Owners, Veterinarians, and Error.
 
 ## Alternative Flows

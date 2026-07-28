@@ -54,6 +54,14 @@ on:
         description: Id of the run from the Studio
         required: true
         type: string
+      model:
+        # Pinned rather than left to Claude Code, whose default can move between
+        # releases: a run should cost and behave the same tomorrow as it does today.
+        # The Studio sends the value; the default only covers a dispatch by hand.
+        description: Model Claude Code runs with
+        required: false
+        default: claude-sonnet-5
+        type: string
       max_turns:
         # A document skill writes one artifact out of another and is done in a few
         # dozen turns; code and tests need considerably more. The Studio sets the value
@@ -90,6 +98,65 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v4
 
+      # A specification edit that only removes a requirement is invisible to the skill:
+      # the remaining text is already satisfied by the existing code, so the run finds
+      # nothing to do and the dropped behaviour survives. The diff against the default
+      # branch makes every change explicit - removals included - and travels with the
+      # prompt so the skill reconciles the code with the change instead of re-checking
+      # a specification it already fulfils.
+      - name: Determine the change of the specification
+        id: spec_change
+        if: inputs.subject != ''
+        env:
+          SKILL: ${{ inputs.skill }}
+          # through the environment, not into the script: the subject is free text
+          SUBJECT: ${{ inputs.subject }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          # Only the skills that turn a specification into code or tests care how the
+          # specification moved; the document skills rewrite their artifact as a whole.
+          case "$SKILL" in
+            implement | browserless-test | spring-boot-test | vitest-test | playwright-test) ;;
+            *) exit 0 ;;
+          esac
+          # The subject of these skills is the path of the specification. A subject that
+          # is an id names no file and has no history to diff.
+          if [ ! -f "$SUBJECT" ]; then
+            exit 0
+          fi
+          # The checkout is shallow; the tip of the default branch is enough for a
+          # two-point diff of a single file. FETCH_HEAD instead of a remote ref because
+          # actions/checkout narrows the fetch refspec to the dispatched ref.
+          git fetch --quiet --depth=1 origin "refs/heads/$DEFAULT_BRANCH"
+          diff=$(git diff FETCH_HEAD HEAD -- "$SUBJECT")
+          if [ -z "$diff" ]; then
+            echo "The specification matches \`$DEFAULT_BRANCH\`; the run works from the specification alone." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          # A diff of a single specification is small. Anything larger is not a
+          # specification edit and would drown the prompt - better no hint than a
+          # truncated one that misleads.
+          if [ "${#diff}" -gt 20000 ]; then
+            echo "The diff of \`$SUBJECT\` is too large for the prompt; the run works from the specification alone." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          # The delimiter carries the commit id, so no line of the diff can match it.
+          # Tildes fence the diff because a Markdown specification may itself contain
+          # backtick fences.
+          {
+            echo "hint<<AIUP-DIFF-$GITHUB_SHA"
+            echo ""
+            echo "The specification named above was changed on this branch. Its diff against \`$DEFAULT_BRANCH\`:"
+            echo ""
+            echo '~~~diff'
+            printf '%s\n' "$diff"
+            echo '~~~'
+            echo ""
+            echo "Reconcile the result with every change in this diff, not only with the current text of the specification. A removed line means the behaviour it described was dropped deliberately: delete the code or tests that exist only for that behaviour."
+            echo "AIUP-DIFF-$GITHUB_SHA"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Run the skill
         uses: anthropics/claude-code-action@v1
         with:
@@ -112,7 +179,12 @@ jobs:
             aiup-core@ai-unified-process-marketplace
             aiup-vaadin-jooq@ai-unified-process-marketplace
             aiup-angular-jpa@ai-unified-process-marketplace
-          prompt: /${{ inputs.plugin }}:${{ inputs.skill }} ${{ inputs.subject }}
+          # The diff of the specification follows the slash command; an empty hint
+          # leaves the prompt as the bare command. Everything after the command name
+          # reaches the skill as its arguments, and the skills expect the diff there.
+          prompt: |
+            /${{ inputs.plugin }}:${{ inputs.skill }} ${{ inputs.subject }}
+            ${{ steps.spec_change.outputs.hint }}
           # The permission mode has to be set here: the action only grants it in its tag
           # mode (@claude in a comment), and a workflow_dispatch run is its agent mode,
           # where nothing but these arguments applies. Without it the skill is allowed to
@@ -124,6 +196,7 @@ jobs:
           # that the next step can turn them into a pull request. The deny rule outranks
           # the permission mode, so the block holds.
           claude_args: |
+            --model ${{ inputs.model }}
             --max-turns ${{ inputs.max_turns }}
             --permission-mode bypassPermissions
             --disallowedTools Bash(git:*)

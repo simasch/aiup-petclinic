@@ -5,11 +5,11 @@
 **Use Case ID:** UC-001   
 **Use Case Name:** View Welcome Page   
 **Primary Actor:** Visitor   
-**Goal:** Display the application's home page so the user can orient themselves and navigate to the main functional
-areas.   
+**Goal:** Display the application's home page so the user can orient themselves and navigate to the main functional areas.   
 **Status:** Done
 
 ## Preconditions
+
 
 ## Main Success Scenario
 

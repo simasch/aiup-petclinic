@@ -179,7 +179,6 @@ jobs:
             aiup-core@ai-unified-process-marketplace
             aiup-vaadin-jooq@ai-unified-process-marketplace
             aiup-angular-jpa@ai-unified-process-marketplace
-          prompt: /${{ inputs.plugin }}:${{ inputs.skill }} ${{ inputs.subject }}
           # The diff of the specification follows the slash command; an empty hint
           # leaves the prompt as the bare command. Everything after the command name
           # reaches the skill as its arguments, and the skills expect the diff there.
@@ -306,4 +305,3 @@ jobs:
           else
             echo "The skill produced no changes; no pull request was created." >> "$GITHUB_STEP_SUMMARY"
           fi
-

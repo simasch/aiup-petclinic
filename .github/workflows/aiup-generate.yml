@@ -86,6 +86,11 @@ jobs:
       model: ${{ inputs.model }}
       max_turns: ${{ inputs.max_turns }}
       timeout_minutes: ${{ inputs.timeout_minutes }}
-    # The secrets with the AI access (ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN)
-    # stay in this repository and are passed through; the marketplace never holds them.
-    secrets: inherit
+    # The secrets with the AI access stay in this repository and are passed through;
+    # the marketplace never holds them. Passed one by one instead of `secrets: inherit`:
+    # GitHub only inherits secrets into a called workflow of the same organization, and
+    # this repository usually lives elsewhere. One of the two is enough; the other stays
+    # empty and is ignored.
+    secrets:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}

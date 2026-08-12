@@ -1,19 +1,19 @@
-# AIUP Studio - AI-assisted generation.
+# AI Unified Process Studio - AI-assisted generation.
 #
-# This file is created by the AIUP Studio during the setup and should not be edited by
+# This file is created by the AI Unified Process Studio during the setup and should not be edited by
 # hand - the Studio compares it against its template and offers the update when the two
 # differ.
 #
 # The Studio triggers the workflow through workflow_dispatch. The work itself - running
 # the skill and providing the result as a pull request - lives in the reusable workflow
-# of the AIUP marketplace; this file only receives the dispatch and passes it on. A new
+# of the AI Unified Process marketplace; this file only receives the dispatch and passes it on. A new
 # skill or plugin arrives with the marketplace and does not change this file.
-name: AIUP Generate
+name: AI Unified Process Generate
 
 # The correlation id is part of the run name so the Studio finds the run it triggered:
 # workflow_dispatch does not return a run id of its own. The run name has to be set
 # here - a called workflow cannot change it.
-run-name: AIUP ${{ inputs.skill }} ${{ inputs.correlation_id }}
+run-name: AI Unified Process ${{ inputs.skill }} ${{ inputs.correlation_id }}
 
 on:
   workflow_dispatch:

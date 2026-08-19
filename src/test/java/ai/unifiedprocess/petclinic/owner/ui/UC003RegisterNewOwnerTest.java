@@ -102,4 +102,3 @@ class UC003RegisterNewOwnerTest extends PetClinicTestBase {
                 UI.getCurrent().getInternals().getActiveViewLocation().getPath());
     }
 }
-

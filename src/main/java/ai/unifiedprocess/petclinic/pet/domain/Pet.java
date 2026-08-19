@@ -20,4 +20,3 @@ public record Pet(
         return new Pet(null, "", null, null, ownerId);
     }
 }
-

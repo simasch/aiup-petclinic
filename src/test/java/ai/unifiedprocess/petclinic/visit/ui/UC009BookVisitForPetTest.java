@@ -96,4 +96,3 @@ class UC009BookVisitForPetTest extends PetClinicTestBase {
                 "Expected NotFoundErrorView for mismatched owner/pet");
     }
 }
-

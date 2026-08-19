@@ -94,4 +94,3 @@ class UC002ViewVeterinariansTest extends PetClinicTestBase {
         throw new AssertionError("Vet with last name '" + lastName + "' not found in grid");
     }
 }
-

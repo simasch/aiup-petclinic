@@ -37,4 +37,3 @@ public class WelcomeView extends VerticalLayout {
         add(decorativeImage, unifiedProcessLink);
     }
 }
-

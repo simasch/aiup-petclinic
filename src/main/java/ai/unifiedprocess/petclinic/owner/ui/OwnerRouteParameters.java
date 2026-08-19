@@ -24,4 +24,3 @@ public final class OwnerRouteParameters {
                         PET_ID, petId.toString()));
     }
 }
-

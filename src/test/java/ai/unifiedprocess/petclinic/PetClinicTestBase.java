@@ -38,4 +38,3 @@ public abstract class PetClinicTestBase extends SpringBrowserlessTest {
     /** UC-008 rename-collision source — Jean Coleman's cat "Samantha", renamed to "Max" to trigger BR-001. */
     protected static final int PET_SAMANTHA_ID = 7;
 }
-

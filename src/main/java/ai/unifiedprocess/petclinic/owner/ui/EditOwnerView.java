@@ -78,4 +78,3 @@ public class EditOwnerView extends VerticalLayout implements BeforeEnterObserver
                 () -> Notification.show(ERROR_MESSAGE));
     }
 }
-

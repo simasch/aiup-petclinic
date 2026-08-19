@@ -59,4 +59,3 @@ public class AddOwnerView extends VerticalLayout {
         add(heading, ownerForm, buttons);
     }
 }
-

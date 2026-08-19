@@ -81,4 +81,3 @@ class UC001ViewWelcomePageTest extends SpringBrowserlessTest {
                 "Missing Error navigation item");
     }
 }
-

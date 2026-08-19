@@ -38,4 +38,3 @@ public class ApplicationErrorView extends VerticalLayout implements HasErrorPara
         return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
     }
 }
-

@@ -140,4 +140,3 @@ public class AddVisitView extends VerticalLayout implements BeforeEnterObserver 
                 OwnerDetailsView.class, OwnerRouteParameters.forOwner(ownerId)));
     }
 }
-

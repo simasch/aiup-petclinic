@@ -11,4 +11,3 @@ public record Visit(Integer id, LocalDate visitDate, String description, Integer
         return new Visit(null, LocalDate.now(), "", petId);
     }
 }
-

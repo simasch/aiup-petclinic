@@ -18,4 +18,3 @@ public record Vet(Integer id, String firstName, String lastName, List<String> sp
         return specialties.isEmpty() ? "none" : String.join(", ", specialties);
     }
 }
-

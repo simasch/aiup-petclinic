@@ -115,4 +115,3 @@ class UC005ViewOwnerDetailsTest extends PetClinicTestBase {
                 com.vaadin.flow.component.UI.getCurrent().getInternals().getActiveViewLocation().getPath());
     }
 }
-

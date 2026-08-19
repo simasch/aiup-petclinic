@@ -40,4 +40,3 @@ public class VetsView extends VerticalLayout {
         setFlexGrow(1, vetsGrid);
     }
 }
-

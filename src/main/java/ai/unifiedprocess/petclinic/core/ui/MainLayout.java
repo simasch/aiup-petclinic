@@ -54,4 +54,3 @@ public class MainLayout extends AppLayout {
         addToDrawer(sideNav);
     }
 }
-

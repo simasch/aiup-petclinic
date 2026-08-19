@@ -117,4 +117,3 @@ class UC007AddPetToOwnerTest extends PetClinicTestBase {
                 UI.getCurrent().getInternals().getActiveViewLocation().getPath());
     }
 }
-

@@ -75,3 +75,4 @@ class UC004FindOwnersByLastNameTest extends PetClinicTestBase {
         assertTrue($(Grid.class).all().isEmpty(), "Expected results grid to be hidden");
     }
 }
+

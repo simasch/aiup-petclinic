@@ -60,3 +60,4 @@ CREATE TABLE vet_specialties (
     specialty_id INTEGER NOT NULL REFERENCES specialties (id),
     PRIMARY KEY (vet_id, specialty_id)
 );
+

@@ -23,3 +23,4 @@ public record Owner(
         return new Owner(newId, firstName, lastName, address, city, telephone);
     }
 }
+

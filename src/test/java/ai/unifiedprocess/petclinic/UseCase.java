@@ -18,3 +18,4 @@ public @interface UseCase {
 	String[] businessRules() default {};
 
 }
+

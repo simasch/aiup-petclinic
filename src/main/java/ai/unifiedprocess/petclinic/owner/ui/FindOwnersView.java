@@ -113,3 +113,4 @@ public class FindOwnersView extends VerticalLayout {
                 ownerRepository.findListingByLastNamePrefix(prefix, query.getOffset(), query.getLimit()));
     }
 }
+

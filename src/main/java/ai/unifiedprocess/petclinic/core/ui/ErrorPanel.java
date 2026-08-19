@@ -40,3 +40,4 @@ class ErrorPanel extends VerticalLayout {
         messagePara.setText(message == null ? "" : message);
     }
 }
+

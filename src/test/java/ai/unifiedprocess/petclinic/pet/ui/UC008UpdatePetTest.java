@@ -102,3 +102,4 @@ class UC008UpdatePetTest extends PetClinicTestBase {
                 UI.getCurrent().getInternals().getActiveViewLocation().getPath());
     }
 }
+

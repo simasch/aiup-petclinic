@@ -51,3 +51,4 @@ public class VetRepository {
         return dsl.fetchCount(VETS);
     }
 }
+

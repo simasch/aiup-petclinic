@@ -22,3 +22,4 @@ public class CrashView extends Div implements BeforeEnterObserver {
                 "Expected: controller used to showcase what happens when an exception is thrown");
     }
 }
+

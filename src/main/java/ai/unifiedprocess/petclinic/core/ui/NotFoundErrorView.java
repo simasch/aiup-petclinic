@@ -36,3 +36,4 @@ public class NotFoundErrorView extends VerticalLayout implements HasErrorParamet
         return HttpServletResponse.SC_NOT_FOUND;
     }
 }
+

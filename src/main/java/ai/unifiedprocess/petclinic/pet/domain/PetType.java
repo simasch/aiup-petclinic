@@ -10,3 +10,4 @@ public record PetType(Integer id, String name) {
         return name;
     }
 }
+

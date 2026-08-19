@@ -15,3 +15,4 @@ public record OwnerListing(Owner owner, List<String> petNames) {
         return String.join(" ", petNames);
     }
 }
+

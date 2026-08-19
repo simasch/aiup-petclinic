@@ -84,3 +84,4 @@ class UC010ViewApplicationErrorTest extends PetClinicTestBase {
                         + message.getText());
     }
 }
+

@@ -77,3 +77,4 @@ class UC006UpdateOwnerTest extends PetClinicTestBase {
                 "Expected seed name to remain unchanged");
     }
 }
+

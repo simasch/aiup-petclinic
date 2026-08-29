@@ -6,7 +6,7 @@
 **Use Case Name:** View Veterinarians   
 **Primary Actor:** Visitor   
 **Goal:** Browse the list of veterinarians employed at the clinic along with their specialties.   
-**Status:** Tested
+**Status:** Approved
 
 ## Preconditions
 

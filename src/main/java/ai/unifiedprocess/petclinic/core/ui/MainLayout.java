@@ -1,4 +1,4 @@
-package ai.unifiedprocess.petclinic.ui;
+package ai.unifiedprocess.petclinic.core.ui;
 
 import ai.unifiedprocess.petclinic.welcome.ui.WelcomeView;
 import com.vaadin.flow.component.applayout.AppLayout;

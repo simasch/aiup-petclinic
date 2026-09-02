@@ -1,6 +1,6 @@
 package ai.unifiedprocess.petclinic.welcome.ui;
 
-import ai.unifiedprocess.petclinic.ui.MainLayout;
+import ai.unifiedprocess.petclinic.core.ui.MainLayout;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;

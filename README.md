@@ -45,7 +45,8 @@ The specifications that drive the implementation live in [`docs/`](docs/):
 A PostgreSQL instance is required. Tests use Testcontainers and need Docker running:
 
 ```bash
-./mvnw test
+./mvnw test     # server-side view tests (*Test)
+./mvnw verify   # additionally runs the browser-based integration tests (*IT)
 ```
 
 ## Structure

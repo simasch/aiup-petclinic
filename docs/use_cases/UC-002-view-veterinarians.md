@@ -23,16 +23,6 @@
 
 ## Alternative Flows
 
-### A1: Request Vets as JSON/XML
-
-**Trigger:** A client requests `/vets` (without `.html`) expecting a machine-readable representation.
-**Flow:**
-
-1. System loads all veterinarians from the repository.
-2. System wraps them in a `Vets` container object.
-3. System returns the collection serialized as JSON or XML (content-negotiated).
-4. Use case ends.
-
 ## Postconditions
 
 ### Success Postconditions

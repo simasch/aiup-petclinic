@@ -17,6 +17,8 @@ something, read the relevant spec first:
 - `docs/use_cases/UC-NNN-*.md` — one file per use case with preconditions,
   main success scenario, alternative flows, postconditions, business rules.
   UI flows, field labels, and navigation come from these.
+- `docs/test_cases/TC-NNN-*.md` — end-to-end journeys spanning several use
+  cases; each is verified by a Playwright `TC<NNN><Name>IT`.
 
 If a use case and the code disagree, the use case wins unless the user says
 otherwise.
@@ -24,14 +26,21 @@ otherwise.
 ## Stack
 
 - **Java 25**, **Spring Boot 4.0.5**, **Vaadin 25.1**
+- Application code lives under package `ai.unifiedprocess.petclinic`
+  (package-by-feature, see `docs/guidelines/architecture.md`).
 - **jOOQ** for type-safe SQL — generated sources live in
   `target/generated-sources/jooq` under package
-  `ai.unifiedprocess.demo.petclinic.database`
+  `ai.unifiedprocess.demo.petclinic.database` (note the extra `demo`
+  segment — it differs from the application package on purpose).
 - **Flyway** migrations in `src/main/resources/db/migration`
   (`V1__initial_schema.sql` covers the full entity model; test-only seed
   data lives in `src/test/resources/db/migration/V2__seed_reference_data.sql`)
 - **PostgreSQL** in prod; **Testcontainers** (`postgres:17-alpine`) for
   tests *and* for jOOQ code generation at build time
+- **Vaadin Browserless Testing** (`browserless-test-junit6`) for
+  server-side view tests; **Playwright + Drama Finder** for browser-based
+  integration tests (dependency added by the `playwright-test` skill when
+  the first `*IT` is written)
 
 ## Commands
 
@@ -39,19 +48,30 @@ otherwise.
 # Run the app locally (Testcontainers-backed Postgres via TestAiupPetclinicApplication)
 ./mvnw spring-boot:test-run
 
-# Full build — also runs jOOQ codegen against a throwaway Testcontainers Postgres
-./mvnw verify
+# Regenerate jOOQ sources after changing a Flyway migration
+./mvnw generate-sources
 
-# Run all tests (Docker must be running)
+# Unit / server-side tests: Surefire runs every *Test class
+# (browserless Vaadin view tests, UC<NNN><Name>Test)
 ./mvnw test
 
-# Run a single test class / method
+# Run a single *Test class / method
 ./mvnw test -Dtest=UC004FindOwnersByLastNameTest
 ./mvnw test -Dtest=UC004FindOwnersByLastNameTest#singleMatchNavigatesDirectlyToDetails
 
-# Regenerate jOOQ sources after changing a Flyway migration
-./mvnw generate-sources
+# Integration tests: Failsafe runs every *IT class in the verify phase
+# (Playwright browser tests, UC<NNN><Name>IT / TC<NNN><Name>IT).
+# verify also runs jOOQ codegen, the frontend build, and all *Test first.
+./mvnw verify
+
+# Run a single *IT class
+./mvnw verify -Dit.test=TC001NewOwnerFirstVisitIT
+./mvnw verify -Dit.test=TC001NewOwnerFirstVisitIT -Dheadless=false   # watch the browser
 ```
+
+Test class suffix decides the phase: `*Test` → `test` (Surefire),
+`*IT` → `verify` (Failsafe). Never name a browserless test `*IT` or a
+Playwright test `*Test`.
 
 Docker must be running for `test`, `verify`, and `generate-sources`. **If
 you add or change a migration, jOOQ classes won't update until you re-run
@@ -73,10 +93,11 @@ you add or change a migration, jOOQ classes won't update until you re-run
 
 - **Before writing or modifying any test under `src/test/java/`** → read
   [`docs/guidelines/testing.md`](docs/guidelines/testing.md) first. It
-  covers `SpringBrowserlessTest`, the `UC<NNN><Name>Test` naming rule, the
-  `@UseCase` annotation, `PetClinicTestBase`, seed-data conventions,
-  locator patterns, and what you must **not** do (no public test getters,
-  no `assertNotNull` on fields, no nested field reach-in, no Karibu).
+  covers `SpringBrowserlessTest`, the `UC<NNN><Name>Test` / `*IT` naming
+  rule, the `@UseCase` annotation, `PetClinicTestBase`, seed-data
+  conventions, locator patterns, the Playwright `*IT` layer, and what you
+  must **not** do (no public test getters, no `assertNotNull` on fields, no
+  field reach-in, no Karibu).
 
 Do not skip these. Both files are short and kept current — drift between
 them and the code is a bug to fix, not a style preference to ignore.
@@ -93,8 +114,12 @@ Prefer these over ad-hoc generation:
 - `aiup-vaadin-jooq:implement` — implement a use case end-to-end (view +
   jOOQ queries). Already honours `docs/guidelines/architecture.md`.
 - `aiup-vaadin-jooq:browserless-test` — server-side Vaadin view tests
-  (`SpringBrowserlessTest`, `$()` locators). Default for UC tests; see
-  `docs/guidelines/testing.md`.
-- `aiup-vaadin-jooq:playwright-test` — browser-based end-to-end tests. For
-  server-side tests, see `docs/guidelines/testing.md` (the `karibu-test`
-  skill is obsolete).
+  (`SpringBrowserlessTest`, `$()` locators), named `UC<NNN><Name>Test`, run
+  by `./mvnw test`. Default for UC tests; see `docs/guidelines/testing.md`.
+- `aiup-vaadin-jooq:playwright-test` — browser-based tests with Drama
+  Finder, named `UC<NNN><Name>IT` / `TC<NNN><Name>IT`, run by
+  `./mvnw verify`. Use for test cases (TC-*) and journeys that need a real
+  browser. The `karibu-test` skill is obsolete.
+- `aiup-core:test-case` — author `docs/test_cases/TC-NNN-*.md`.
+- `aiup-vaadin-jooq:coverage-check` — audit a UC/TC against code and tests
+  before changing its `Status:` line.

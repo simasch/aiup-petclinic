@@ -1,6 +1,8 @@
 package ai.unifiedprocess.petclinic;
 
 import com.vaadin.browserless.SpringBrowserlessTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -17,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>The constants below point at rows in V2 that tests reference by id.
  * They must stay in sync with {@code V2__seed_reference_data.sql}.
  */
+@SpringBootTest
+@Import(TestcontainersConfiguration.class)
 @Transactional
 public abstract class PetClinicTestBase extends SpringBrowserlessTest {
 

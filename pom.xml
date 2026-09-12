@@ -140,6 +140,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <!-- Surefire (test phase) runs *Test; Failsafe (verify phase) runs *IT.
+                 Version and executions come from spring-boot-starter-parent. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>dev.sivalabs</groupId>
                 <artifactId>testcontainers-jooq-codegen-maven-plugin</artifactId>

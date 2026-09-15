@@ -3,6 +3,7 @@ package ai.unifiedprocess.petclinic;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
+import com.tngtech.archunit.core.importer.ImportOption;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -210,7 +211,7 @@ class TraceabilityTest {
         }
         try (Stream<Path> files = Files.list(USE_CASE_DIR)) {
             List<UseCaseSpec> parsed = new ArrayList<>();
-            for (Path file : files.filter(path -> path.getFileName().toString().endsWith(".md")).toList()) {
+            for (Path file : files.filter(TraceabilityTest::isSpecification).toList()) {
                 parsed.add(parse(file, Files.readString(file)));
             }
             parsed.sort(Comparator.comparing(UseCaseSpec::id));
@@ -228,7 +229,9 @@ class TraceabilityTest {
     }
 
     private static List<TestReference> readTestReferences() {
-        JavaClasses classes = new ClassFileImporter().importPackages("ai.unifiedprocess.petclinic");
+        JavaClasses classes = new ClassFileImporter()
+                .withImportOption(ImportOption.Predefined.ONLY_INCLUDE_TESTS)
+                .importPackages("ai.unifiedprocess.petclinic");
         return StreamSupport.stream(classes.spliterator(), false)
                 .sorted(Comparator.comparing(JavaClass::getSimpleName))
                 .flatMap(javaClass -> javaClass.getMethods().stream()
@@ -246,6 +249,15 @@ class TraceabilityTest {
     }
 
     // --- Helpers ---------------------------------------------------------------
+
+    /**
+     * Only {@code UC-NNN-*.md} counts as a specification, so a README or an index
+     * page living beside them is skipped instead of failing the parser.
+     */
+    private static boolean isSpecification(Path file) {
+        String name = file.getFileName().toString();
+        return name.startsWith("UC-") && name.endsWith(".md");
+    }
 
     private Stream<TestReference> knownReferences() {
         return references.stream().filter(reference -> byId.containsKey(reference.useCaseId()));

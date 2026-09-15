@@ -5,12 +5,8 @@
 
 version: 2
 updates:
-  # jOOQ Pro comes from repsy, so the resolver needs those credentials - without
-  # the registries entry Dependabot cannot resolve the dependency tree at all
   - package-ecosystem: "maven"
     directory: "/"
-    registries:
-      - repsy
     schedule:
       interval: "daily"
     groups:

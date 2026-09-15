@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.5</version>
+        <version>4.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ai.unifiedprocess.demo</groupId>
@@ -29,8 +29,8 @@
     </scm>
     <properties>
         <java.version>25</java.version>
-        <vaadin.version>25.1.1</vaadin.version>
-        <jooq.version>3.21.1</jooq.version>
+        <vaadin.version>25.2.7</vaadin.version>
+        <jooq.version>3.21.8</jooq.version>
         <testcontainers-jooq-codegen-maven-plugin.version>1.0.0</testcontainers-jooq-codegen-maven-plugin.version>
         <archunit.version>1.5.0</archunit.version>
     </properties>

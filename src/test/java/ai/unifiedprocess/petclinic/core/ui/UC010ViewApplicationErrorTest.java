@@ -1,4 +1,4 @@
-package ai.unifiedprocess.petclinic.ui;
+package ai.unifiedprocess.petclinic.core.ui;
 
 import ai.unifiedprocess.petclinic.PetClinicTestBase;
 import ai.unifiedprocess.petclinic.TestcontainersConfiguration;
@@ -82,5 +82,28 @@ class UC010ViewApplicationErrorTest extends PetClinicTestBase {
         assertTrue(message.getText().contains("99999"),
                 "Expected the not-found message to include the missing owner id, got: "
                         + message.getText());
+    }
+
+    @Test
+    @UseCase(id = "UC-010", businessRules = "BR-001")
+    void errorViewIsReachableWithoutAuthentication() {
+        assertDoesNotThrow(() -> UI.getCurrent().navigate("oups"),
+                "Expected /oups to be reachable without authentication");
+        assertDoesNotThrow(() -> find(ApplicationErrorView.class).single(),
+                "Expected the error view to render anonymously, as for UC-001 and UC-002");
+    }
+
+    @Test
+    @UseCase(id = "UC-010", scenario = "A2: Unexpected Error", businessRules = "BR-004")
+    void oupsRouteAlwaysFailsWithTheShowcaseMessage() {
+        UI.getCurrent().navigate("oups");
+
+        ApplicationErrorView errorView = find(ApplicationErrorView.class).single();
+        Paragraph message = find(Paragraph.class).from(errorView).single();
+        // BR-004 pins the exact wording, which the original Spring PetClinic
+        // CrashController uses — an approximate match would let it drift.
+        assertEquals(
+                "Expected: controller used to showcase what happens when an exception is thrown",
+                message.getText());
     }
 }

@@ -74,4 +74,46 @@ class UC004FindOwnersByLastNameTest extends PetClinicTestBase {
         assertEquals("not found", lastNameField.getErrorMessage());
         assertTrue(find(Grid.class).all().isEmpty(), "Expected results grid to be hidden");
     }
+
+    @Test
+    @UseCase(id = "UC-004", scenario = "A4: Scroll Through Results")
+    void scrollingMaterialisesOwnersBeyondTheFirstRows() {
+        searchAllOwners();
+        Grid<?> grid = find(Grid.class).single();
+
+        assertEquals(10, test(grid).size(), "Expected all 10 seed owners in the result set");
+
+        // Materialising a row near the end of the result set is the
+        // browserless equivalent of scrolling there: the callback data
+        // provider is queried for that range and appends the rows.
+        Object firstRow = test(grid).getRow(0);
+        Object lastRow = test(grid).getRow(9);
+
+        assertNotEquals(firstRow, lastRow,
+                "Expected the last row to be a different owner than the first");
+        // Owners are ordered by last name, so Schroeder is the final row —
+        // a row that is only reachable once the later range has been fetched.
+        assertEquals("Jeff Black", test(grid).getCellText(0, 0));
+        assertEquals("David Schroeder", test(grid).getCellText(9, 0),
+                "Expected the alphabetically last seed owner in the final row");
+    }
+
+    @Test
+    @UseCase(id = "UC-004", businessRules = "BR-002")
+    void ownersGridFetchesRowsLazily() {
+        searchAllOwners();
+        Grid<?> grid = find(Grid.class).single();
+
+        // BR-002: rows are fetched from the backend per requested range. An
+        // in-memory provider would mean the whole result set was loaded up
+        // front, which is exactly what the rule forbids.
+        assertFalse(grid.getDataProvider().isInMemory(),
+                "BR-002: expected a lazy backend data provider, not an in-memory one");
+    }
+
+    private void searchAllOwners() {
+        navigate(FindOwnersView.class);
+        test(find(TextField.class).withCaption("Last name").single()).setValue("");
+        test(find(Button.class).withText("Find Owner").single()).click();
+    }
 }

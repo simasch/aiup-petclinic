@@ -20,6 +20,13 @@ something, read the relevant spec first:
 - `docs/test_cases/TC-NNN-*.md` — end-to-end journeys spanning several use
   cases; each is verified by a Playwright `TC<NNN><Name>IT`.
 
+`TraceabilityTest` (`./mvnw test`) enforces the link between the two: every
+`@UseCase` annotation must point at a use case, flow, and business rule that
+really exist, and a use case with `Status: Done` or `Tested` must have a test
+behind its main scenario, *every* alternative flow, and *every* business rule.
+The `Status:` line is therefore an assertion that switches the sensor on — do
+not set it by hand without running `aiup-vaadin-jooq:coverage-check` first.
+
 If a use case and the code disagree, the use case wins unless the user says
 otherwise.
 
@@ -52,8 +59,8 @@ otherwise.
 ./mvnw generate-sources
 
 # Unit / server-side tests: Surefire runs every *Test class
-# (browserless Vaadin view tests, UC<NNN><Name>Test, plus the ArchUnit
-# rules in ArchitectureTest)
+# (browserless Vaadin view tests, UC<NNN><Name>Test, the ArchUnit rules in
+# ArchitectureTest, and the spec/test traceability sensor TraceabilityTest)
 ./mvnw test
 
 # Run a single *Test class / method

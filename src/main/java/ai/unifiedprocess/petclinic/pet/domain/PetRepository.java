@@ -81,12 +81,21 @@ public class PetRepository {
                 .getId();
     }
 
+    /**
+     * UC-008 BR-003: a type is only enforced when the pet is first created, so
+     * the edit form may hand back a pet without one. "Left unchanged" is taken
+     * literally — the TYPE_ID column is then left out of the UPDATE rather than
+     * overwritten. Writing null is not an option either way: the column is
+     * NOT NULL.
+     */
     public void update(Pet pet) {
-        dsl.update(PETS)
+        var update = dsl.update(PETS)
                 .set(PETS.NAME, pet.name())
-                .set(PETS.BIRTH_DATE, pet.birthDate())
-                .set(PETS.TYPE_ID, pet.type().id())
-                .where(PETS.ID.eq(pet.id()))
+                .set(PETS.BIRTH_DATE, pet.birthDate());
+        if (pet.type() != null) {
+            update = update.set(PETS.TYPE_ID, pet.type().id());
+        }
+        update.where(PETS.ID.eq(pet.id()))
                 .execute();
     }
 }

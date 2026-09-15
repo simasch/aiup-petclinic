@@ -5,11 +5,16 @@ import ai.unifiedprocess.petclinic.TestcontainersConfiguration;
 import ai.unifiedprocess.petclinic.UseCase;
 import ai.unifiedprocess.petclinic.vet.domain.Vet;
 import com.vaadin.flow.component.grid.Grid;
+import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
 import java.util.List;
+
+import static ai.unifiedprocess.demo.petclinic.database.Tables.VETS;
+import static ai.unifiedprocess.demo.petclinic.database.Tables.VET_SPECIALTIES;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,6 +29,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
 class UC002ViewVeterinariansTest extends PetClinicTestBase {
+
+    @Autowired
+    private DSLContext dsl;
 
     @Test
     @UseCase(id = "UC-002", businessRules = "BR-003")
@@ -68,13 +76,57 @@ class UC002ViewVeterinariansTest extends PetClinicTestBase {
     }
 
     @Test
-    @UseCase(id = "UC-002", businessRules = "BR-001")
+    @UseCase(id = "UC-002")
     void gridColumnsMatchSpecification() {
         navigate(VetsView.class);
         List<String> headers = grid().getColumns().stream()
                 .map(Grid.Column::getHeaderText)
                 .toList();
         assertEquals(List.of("First Name", "Last Name", "Specialties"), headers);
+    }
+
+    @Test
+    @UseCase(id = "UC-002", businessRules = "BR-001")
+    void vetsGridFetchesRowsLazily() {
+        navigate(VetsView.class);
+        Grid<Vet> grid = grid();
+
+        // BR-001: rows come from the backend per requested range. An in-memory
+        // provider would mean the whole list was loaded up front — precisely
+        // what "no fixed page size, no page controls" rules out.
+        assertFalse(grid.getDataProvider().isInMemory(),
+                "BR-001: expected a lazy backend data provider, not an in-memory one");
+
+        // Main scenario step 4: materialising the final row is the browserless
+        // equivalent of scrolling to the end — the next chunk is fetched and
+        // appended on demand. Vets are ordered by last name.
+        assertEquals(6, test(grid).size());
+        assertEquals("Carter", test(grid).getRow(0).lastName());
+        assertEquals("Stevens", test(grid).getRow(5).lastName(),
+                "Expected the last vet to be reachable through a later fetch");
+    }
+
+    @Test
+    @UseCase(id = "UC-002", scenario = "A1: No Veterinarians Registered")
+    void gridRendersWithoutRowsWhenNoVetsAreRegistered() {
+        // A1 is the *absence* of data, which V2 seed data cannot express —
+        // seeding can only add rows. Emptying the tables here is safe because
+        // PetClinicTestBase wraps every test in a transaction that is rolled
+        // back, so no other test observes it. The view still runs the real
+        // VetRepository query, now against an empty table.
+        dsl.deleteFrom(VET_SPECIALTIES).execute();
+        dsl.deleteFrom(VETS).execute();
+
+        navigate(VetsView.class);
+
+        assertEquals(0, test(grid()).size(),
+                "Expected an empty grid when no veterinarians are registered");
+        // A1 must render the grid with no rows — not degrade into an error page.
+        assertDoesNotThrow(() -> find(VetsView.class).single(),
+                "Expected VetsView to still render when there are no vets");
+        assertEquals(List.of("First Name", "Last Name", "Specialties"),
+                grid().getColumns().stream().map(Grid.Column::getHeaderText).toList(),
+                "Expected the column headers to survive the empty result set");
     }
 
     @SuppressWarnings("unchecked")

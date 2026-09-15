@@ -19,13 +19,8 @@
 
 ## Alternative Flows
 
-### A1: Page Fails to Render
-
-**Trigger:** An unexpected failure occurs while the system renders the welcome page (step 2).
-**Flow:**
-
-1. System shows the application error view instead (UC-010).
-2. Use case ends.
+None. The welcome page is a static view with no data access and therefore no failure mode of its
+own; see Failure Postconditions below and UC-010.
 
 ## Postconditions
 

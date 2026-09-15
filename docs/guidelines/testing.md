@@ -55,10 +55,40 @@ void singleMatchNavigatesDirectlyToDetails() { ...}
 - `id` — required, matches a `docs/use_cases/UC-NNN-*.md` file.
 - `scenario` — optional, defaults to `"Main Success Scenario"`. Set it for alternative flows (`"A1: Validation Errors"`,
   `"A2: Owner not found"`).
-- `businessRules` — optional string array of BR IDs (`"BR-001"`, `"BR-002"`) when the test specifically exercises them.
+- `businessRules` — optional array of BR IDs. One rule as `businessRules = "BR-001"`, several as
+  `businessRules = {"BR-001", "BR-002"}` — **never** as one comma-separated string `"BR-001, BR-002"`.
+  `TraceabilityTest` rejects anything that is not a bare `BR-NNN` identifier.
 
 This is the machine-readable spec → test link. `docs/` is the source of truth, so every test points at the exact spec
 element it covers.
+
+## The traceability sensor — `TraceabilityTest`
+
+`docs/` is the source of truth, and `TraceabilityTest` (`./mvnw test`) is what makes that claim checkable. It reads
+every `docs/use_cases/*.md` and every `@UseCase` annotation on the test classpath and compares the two, in both
+directions.
+
+**Referential integrity** — applies to every use case, whatever its status. An annotation may not point at something
+that does not exist:
+
+- every `id` resolves to a `docs/use_cases/UC-NNN-*.md` file,
+- every `scenario` is either the main success scenario or a literal `### A1: …` heading in that file,
+- every `businessRules` entry is a `BR-NNN` identifier and a literal `### BR-NNN: …` heading in that file.
+
+So renaming an alternative flow in a spec breaks the build until the annotations follow. That is the point.
+
+**Coverage** — applies only to a use case whose `Status:` is `Done` or `Tested`. Such a use case must have a test for
+its main success scenario, for *every* alternative flow, and for *every* business rule. Any other status (`Draft`,
+`Specified`, …) is exempt, because this project writes the specification before the code and an unimplemented use case
+is a normal intermediate state, not a defect.
+
+The consequence is that **the `Status:` line is an assertion, not a label**. Setting it to `Done` switches the sensor
+on for that use case; if the tests are not there, `./mvnw test` says so and names each gap. Use
+`aiup-vaadin-jooq:coverage-check` before you change a status line.
+
+When the sensor fails, the honest fixes are to write the missing test or to correct the status — never to weaken the
+check.
+
 
 ## Test base class
 

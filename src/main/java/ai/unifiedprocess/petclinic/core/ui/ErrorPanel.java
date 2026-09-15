@@ -12,7 +12,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
  * and {@link NotFoundErrorView} mount one of these so the two error flows
  * render identically — only the HTTP status differs.
  *
- * <p>Test assertions on the rendered content use {@code $()} locators
+ * <p>Test assertions on the rendered content use {@code find()} locators
  * scoped to the containing error view, so there's no need to expose
  * fields on this helper.
  */

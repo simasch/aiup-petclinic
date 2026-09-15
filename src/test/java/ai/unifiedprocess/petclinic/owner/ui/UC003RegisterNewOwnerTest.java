@@ -101,4 +101,37 @@ class UC003RegisterNewOwnerTest extends PetClinicTestBase {
         assertEquals("owners/new",
                 UI.getCurrent().getInternals().getActiveViewLocation().getPath());
     }
+
+    @Test
+    @UseCase(id = "UC-003", businessRules = "BR-003")
+    void ownerIdIsAssignedByTheDatabase() {
+        navigate(AddOwnerView.class);
+
+        // The user is given no way to supply an id: the form has no such field.
+        assertTrue(find(TextField.class).withCaption("Id").all().isEmpty(),
+                "Expected the add-owner form to expose no id field");
+
+        // Two owners registered with identical data still end up on distinct
+        // routes, so the id can only have come from the database sequence.
+        int firstId = registerWhitfield("Jane");
+        int secondId = registerWhitfield("John");
+
+        assertNotEquals(firstId, secondId,
+                "Expected the database to assign a distinct id to each new owner");
+    }
+
+    /** Registers an owner and returns the id the server routed to. */
+    private int registerWhitfield(String firstName) {
+        navigate(AddOwnerView.class);
+        test(find(TextField.class).withCaption("First Name").single()).setValue(firstName);
+        test(find(TextField.class).withCaption("Last Name").single()).setValue("Whitfield");
+        test(find(TextField.class).withCaption("Address").single()).setValue("123 Oak St");
+        test(find(TextField.class).withCaption("City").single()).setValue("Madison");
+        test(find(TextField.class).withCaption("Telephone").single()).setValue("5551234567");
+        test(find(Button.class).withText("Add Owner").single()).click();
+
+        String path = UI.getCurrent().getInternals().getActiveViewLocation().getPath();
+        assertTrue(path.matches("owners/\\d+"), "Expected owners/<id>, got: " + path);
+        return Integer.parseInt(path.substring("owners/".length()));
+    }
 }

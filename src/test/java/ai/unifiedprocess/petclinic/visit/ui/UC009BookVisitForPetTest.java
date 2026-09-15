@@ -95,4 +95,21 @@ class UC009BookVisitForPetTest extends PetClinicTestBase {
                 () -> find(NotFoundErrorView.class).single(),
                 "Expected NotFoundErrorView for mismatched owner/pet");
     }
+
+    @Test
+    @UseCase(id = "UC-009", scenario = "A3: Owner Not Found")
+    void unknownOwnerRoutesToErrorView() {
+        // Navigate by location string: the typed navigate(Class, …) asserts the
+        // resulting view type and would throw once the router reroutes to the
+        // UC-010 error view.
+        UI.getCurrent().navigate("owners/99999/pets/" + PET_MAX_ID + "/visits/new");
+
+        assertDoesNotThrow(
+                () -> find(NotFoundErrorView.class).single(),
+                "Expected NotFoundErrorView when the owner id resolves to nothing");
+        Paragraph message = find(Paragraph.class)
+                .from(find(NotFoundErrorView.class).single()).single();
+        assertTrue(message.getText().contains("99999"),
+                "Expected the message to name the missing owner id, got: " + message.getText());
+    }
 }

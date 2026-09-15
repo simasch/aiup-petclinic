@@ -56,7 +56,7 @@ class UC006UpdateOwnerTest extends PetClinicTestBase {
     }
 
     @Test
-    @UseCase(id = "UC-006", businessRules = "BR-001, BR-002", scenario = "A1: Validation Errors")
+    @UseCase(id = "UC-006", businessRules = {"BR-001", "BR-002"}, scenario = "A1: Validation Errors")
     void blankRequiredFieldsBlockUpdate() {
         navigate(EditOwnerView.class,
                 Map.of(OwnerRouteParameters.OWNER_ID, Integer.toString(OWNER_DAVIS_HAROLD_ID)));

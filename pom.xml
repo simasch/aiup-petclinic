@@ -32,6 +32,7 @@
         <vaadin.version>25.1.1</vaadin.version>
         <jooq.version>3.21.1</jooq.version>
         <testcontainers-jooq-codegen-maven-plugin.version>1.0.0</testcontainers-jooq-codegen-maven-plugin.version>
+        <archunit.version>1.5.0</archunit.version>
     </properties>
     <dependencies>
         <dependency>
@@ -107,6 +108,12 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>browserless-test-junit6</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
+            <version>${archunit.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <dependencyManagement>

@@ -36,6 +36,10 @@ Tests that verify a use case are named after the use case, **not** the view. For
 If a view is touched by multiple use cases, write one `UC<NNN>…Test` class per use case rather than one `XxxViewTest`
 covering all of them. Keep the test file in the **same package as the view under test** and name the class after the UC.
 
+**Exception — cross-cutting tests.** `ArchitectureTest` (the ArchUnit rules behind
+[`architecture.md`](architecture.md)) and `AiupPetclinicApplicationTests` verify no single use case, so they sit in the
+root package under their own names. Everything that *does* verify a use case follows the format above.
+
 ## `@UseCase` on every test method
 
 Every `@Test` method that verifies UC behaviour must carry `ai.unifiedprocess.petclinic.UseCase` **on the method** (

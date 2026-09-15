@@ -2,6 +2,12 @@
 
 Read this **before implementing** anything in `src/main/java/`.
 
+Most of what follows is **enforced executably** by
+`src/test/java/ai/unifiedprocess/petclinic/ArchitectureTest.java` (ArchUnit, runs with
+`./mvnw test`). Each rule there names the section it comes from, so a failure points straight back
+here. If you change a convention below, change the matching rule in the same commit — a rule that
+contradicts this document is the rule that's wrong.
+
 ## Module layout
 
 Single Maven module, **package-by-feature** under `ai.unifiedprocess.petclinic`. Each feature (`owner`, `pet`, `visit`,
@@ -26,6 +32,10 @@ actions (e.g. `OwnerDetailsView` linking to `AddPetView`, `EditPetView`, `AddVis
 `ui/` classes **as `.class` route tokens** for `SideNavItem` or `ui.navigate(...)`. No instantiation, no method calls,
 no state reads — the token is only a routing key. Any richer interaction must still go through the other feature's
 `domain` package.
+
+Because of that exception the *feature*-level dependency graph is cyclic by design (`owner` → `visit` → `pet` →
+`owner`), so `ArchitectureTest.noCyclesBetweenFeatures` slices on `(*).domain..` instead: the `domain` packages have no
+cross-feature dependencies at all and must stay that way.
 
 ## Data access (jOOQ)
 

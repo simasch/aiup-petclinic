@@ -52,7 +52,8 @@ otherwise.
 ./mvnw generate-sources
 
 # Unit / server-side tests: Surefire runs every *Test class
-# (browserless Vaadin view tests, UC<NNN><Name>Test)
+# (browserless Vaadin view tests, UC<NNN><Name>Test, plus the ArchUnit
+# rules in ArchitectureTest)
 ./mvnw test
 
 # Run a single *Test class / method
@@ -89,7 +90,9 @@ you add or change a migration, jOOQ classes won't update until you re-run
   [`docs/guidelines/architecture.md`](docs/guidelines/architecture.md)
   first. It covers package layout, jOOQ mapping patterns, Vaadin view
   conventions, the shell exception, form validation, error handling, and
-  the `*Repository` stereotype rule.
+  the `*Repository` stereotype rule. Much of it is enforced by ArchUnit in
+  `ArchitectureTest` (`./mvnw test`) — if you change a convention there,
+  update the matching rule in the same commit.
 
 - **Before writing or modifying any test under `src/test/java/`** → read
   [`docs/guidelines/testing.md`](docs/guidelines/testing.md) first. It

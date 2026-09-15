@@ -39,10 +39,10 @@ class UC008UpdatePetTest extends PetClinicTestBase {
                 OwnerRouteParameters.OWNER_ID, Integer.toString(OWNER_COLEMAN_ID),
                 OwnerRouteParameters.PET_ID, Integer.toString(PET_MAX_ID)));
 
-        assertEquals("Max", $(TextField.class).withCaption("Name").single().getValue());
+        assertEquals("Max", find(TextField.class).withCaption("Name").single().getValue());
 
-        test($(TextField.class).withCaption("Name").single()).setValue("Max Jr");
-        test($(Button.class).withText("Update Pet").single()).click();
+        test(find(TextField.class).withCaption("Name").single()).setValue("Max Jr");
+        test(find(Button.class).withText("Update Pet").single()).click();
 
         // On success, navigation returns to the owner details view.
         assertEquals("owners/" + OWNER_COLEMAN_ID,
@@ -50,8 +50,8 @@ class UC008UpdatePetTest extends PetClinicTestBase {
 
         // Coleman's pets, re-read through the details view, should now show
         // "Max Jr" instead of "Max" (alphabetical order preserved).
-        OwnerDetailsView details = $(OwnerDetailsView.class).single();
-        List<String> petNames = $(H3.class).from(details).all().stream()
+        OwnerDetailsView details = find(OwnerDetailsView.class).single();
+        List<String> petNames = find(H3.class).from(details).all().stream()
                 .map(H3::getText)
                 .filter(t -> !t.equals("Pets and Visits"))
                 .toList();
@@ -65,10 +65,10 @@ class UC008UpdatePetTest extends PetClinicTestBase {
                 OwnerRouteParameters.OWNER_ID, Integer.toString(OWNER_COLEMAN_ID),
                 OwnerRouteParameters.PET_ID, Integer.toString(PET_SAMANTHA_ID)));
 
-        test($(TextField.class).withCaption("Name").single()).setValue("Max");
-        test($(Button.class).withText("Update Pet").single()).click();
+        test(find(TextField.class).withCaption("Name").single()).setValue("Max");
+        test(find(Button.class).withText("Update Pet").single()).click();
 
-        TextField nameField = $(TextField.class).withCaption("Name").single();
+        TextField nameField = find(TextField.class).withCaption("Name").single();
         assertTrue(nameField.isInvalid());
         assertEquals("already exists", nameField.getErrorMessage());
         // Still on edit view.
@@ -78,7 +78,7 @@ class UC008UpdatePetTest extends PetClinicTestBase {
         // Seed pet list unchanged when we re-render the details view.
         OwnerDetailsView details = navigate(OwnerDetailsView.class,
                 Map.of(OwnerRouteParameters.OWNER_ID, Integer.toString(OWNER_COLEMAN_ID)));
-        List<String> petNames = $(H3.class).from(details).all().stream()
+        List<String> petNames = find(H3.class).from(details).all().stream()
                 .map(H3::getText)
                 .filter(t -> !t.equals("Pets and Visits"))
                 .toList();
@@ -93,10 +93,10 @@ class UC008UpdatePetTest extends PetClinicTestBase {
                 OwnerRouteParameters.PET_ID, Integer.toString(PET_MAX_ID)));
 
         // Bypass the DatePickerTester (which enforces the component's max).
-        $(DatePicker.class).withCaption("Birth Date").single().setValue(LocalDate.now().plusDays(3));
-        test($(Button.class).withText("Update Pet").single()).click();
+        find(DatePicker.class).withCaption("Birth Date").single().setValue(LocalDate.now().plusDays(3));
+        test(find(Button.class).withText("Update Pet").single()).click();
 
-        assertTrue($(DatePicker.class).withCaption("Birth Date").single().isInvalid());
+        assertTrue(find(DatePicker.class).withCaption("Birth Date").single().isInvalid());
         // Still on edit view — update was rejected.
         assertEquals("owners/" + OWNER_COLEMAN_ID + "/pets/" + PET_MAX_ID + "/edit",
                 UI.getCurrent().getInternals().getActiveViewLocation().getPath());

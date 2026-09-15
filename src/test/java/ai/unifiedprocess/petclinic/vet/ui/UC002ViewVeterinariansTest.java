@@ -79,7 +79,7 @@ class UC002ViewVeterinariansTest extends PetClinicTestBase {
 
     @SuppressWarnings("unchecked")
     private Grid<Vet> grid() {
-        return (Grid<Vet>) $(Grid.class).single();
+        return (Grid<Vet>) find(Grid.class).single();
     }
 
     private Vet findVetByLastName(String lastName) {

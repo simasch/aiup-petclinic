@@ -34,10 +34,10 @@ class UC010ViewApplicationErrorTest extends PetClinicTestBase {
         UI.getCurrent().navigate("oups");
 
         assertDoesNotThrow(
-                () -> $(ApplicationErrorView.class).single(),
+                () -> find(ApplicationErrorView.class).single(),
                 "Expected ApplicationErrorView to be rendered for /oups");
-        ApplicationErrorView errorView = $(ApplicationErrorView.class).single();
-        H2 heading = $(H2.class).from(errorView).single();
+        ApplicationErrorView errorView = find(ApplicationErrorView.class).single();
+        H2 heading = find(H2.class).from(errorView).single();
         assertEquals("Something happened...", heading.getText());
     }
 
@@ -46,8 +46,8 @@ class UC010ViewApplicationErrorTest extends PetClinicTestBase {
     void errorViewShowsExceptionMessage() {
         UI.getCurrent().navigate("oups");
 
-        ApplicationErrorView errorView = $(ApplicationErrorView.class).single();
-        Paragraph message = $(Paragraph.class).from(errorView).single();
+        ApplicationErrorView errorView = find(ApplicationErrorView.class).single();
+        Paragraph message = find(Paragraph.class).from(errorView).single();
         assertTrue(message.getText().startsWith("Expected:"),
                 "Expected the CrashView exception message, got: " + message.getText());
     }
@@ -57,8 +57,8 @@ class UC010ViewApplicationErrorTest extends PetClinicTestBase {
     void errorViewOffersBackToHomeLink() {
         UI.getCurrent().navigate("oups");
 
-        ApplicationErrorView errorView = $(ApplicationErrorView.class).single();
-        RouterLink backLink = $(RouterLink.class).from(errorView).single();
+        ApplicationErrorView errorView = find(ApplicationErrorView.class).single();
+        RouterLink backLink = find(RouterLink.class).from(errorView).single();
         assertEquals("Back to Home", backLink.getText());
         // The RouterLink resolves to the WelcomeView route, which is "".
         assertEquals("", backLink.getHref());
@@ -73,12 +73,12 @@ class UC010ViewApplicationErrorTest extends PetClinicTestBase {
                 OwnerRouteParameters.forOwner(99999));
 
         assertDoesNotThrow(
-                () -> $(NotFoundErrorView.class).single(),
+                () -> find(NotFoundErrorView.class).single(),
                 "Expected NotFoundErrorView for unknown owner id");
-        NotFoundErrorView errorView = $(NotFoundErrorView.class).single();
-        H2 heading = $(H2.class).from(errorView).single();
+        NotFoundErrorView errorView = find(NotFoundErrorView.class).single();
+        H2 heading = find(H2.class).from(errorView).single();
         assertEquals("Something happened...", heading.getText());
-        Paragraph message = $(Paragraph.class).from(errorView).single();
+        Paragraph message = find(Paragraph.class).from(errorView).single();
         assertTrue(message.getText().contains("99999"),
                 "Expected the not-found message to include the missing owner id, got: "
                         + message.getText());

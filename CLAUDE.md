@@ -25,7 +25,7 @@ otherwise.
 
 ## Stack
 
-- **Java 25**, **Spring Boot 4.0.5**, **Vaadin 25.1**
+- **Java 25**, **Spring Boot 4.1.1**, **Vaadin 25.2**
 - Application code lives under package `ai.unifiedprocess.petclinic`
   (package-by-feature, see `docs/guidelines/architecture.md`).
 - **jOOQ** for type-safe SQL — generated sources live in
@@ -37,7 +37,7 @@ otherwise.
   data lives in `src/test/resources/db/migration/V2__seed_reference_data.sql`)
 - **PostgreSQL** in prod; **Testcontainers** (`postgres:17-alpine`) for
   tests *and* for jOOQ code generation at build time
-- **Vaadin Browserless Testing** (`browserless-test-junit6`) for
+- **Vaadin Browserless Testing** (`browserless-test-junit6` + `browserless-test-spring`) for
   server-side view tests; **Playwright + Drama Finder** for browser-based
   integration tests (dependency added by the `playwright-test` skill when
   the first `*IT` is written)
@@ -117,7 +117,7 @@ Prefer these over ad-hoc generation:
 - `aiup-vaadin-jooq:implement` — implement a use case end-to-end (view +
   jOOQ queries). Already honours `docs/guidelines/architecture.md`.
 - `aiup-vaadin-jooq:browserless-test` — server-side Vaadin view tests
-  (`SpringBrowserlessTest`, `$()` locators), named `UC<NNN><Name>Test`, run
+  (`SpringBrowserlessTest`, `find()` locators), named `UC<NNN><Name>Test`, run
   by `./mvnw test`. Default for UC tests; see `docs/guidelines/testing.md`.
 - `aiup-vaadin-jooq:playwright-test` — browser-based tests with Drama
   Finder, named `UC<NNN><Name>IT` / `TC<NNN><Name>IT`, run by

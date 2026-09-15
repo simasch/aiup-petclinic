@@ -33,7 +33,7 @@ class UC001ViewWelcomePageTest extends SpringBrowserlessTest {
     void welcomePageShowsDecorativeImage() {
         navigate(WelcomeView.class);
 
-        assertDoesNotThrow(() -> $(Image.class)
+        assertDoesNotThrow(() -> find(Image.class)
                 .withPropertyValue(Image::getSrc, "images/pets.png")
                 .single(),
                 "Expected exactly one decorative image with src 'images/pets.png'");
@@ -44,7 +44,7 @@ class UC001ViewWelcomePageTest extends SpringBrowserlessTest {
     void clinicLogoIsRendered() {
         navigate(WelcomeView.class);
 
-        assertDoesNotThrow(() -> $(Image.class)
+        assertDoesNotThrow(() -> find(Image.class)
                 .withPropertyValue(Image::getSrc, "images/petclinic-logo.svg")
                 .single(),
                 "Expected exactly one clinic logo image with src 'images/petclinic-logo.svg'");
@@ -55,7 +55,7 @@ class UC001ViewWelcomePageTest extends SpringBrowserlessTest {
     void unifiedProcessLinkIsRendered() {
         navigate(WelcomeView.class);
 
-        Anchor link = assertDoesNotThrow(() -> $(Anchor.class)
+        Anchor link = assertDoesNotThrow(() -> find(Anchor.class)
                 .withPropertyValue(Anchor::getHref, "https://unifiedprocess.ai")
                 .single(),
                 "Expected a link to https://unifiedprocess.ai");
@@ -67,16 +67,16 @@ class UC001ViewWelcomePageTest extends SpringBrowserlessTest {
     void mainNavigationMenuHasRequiredItems() {
         navigate(WelcomeView.class);
 
-        assertDoesNotThrow(() -> $(SideNavItem.class)
+        assertDoesNotThrow(() -> find(SideNavItem.class)
                 .withPropertyValue(SideNavItem::getLabel, "Home").single(),
                 "Missing Home navigation item");
-        assertDoesNotThrow(() -> $(SideNavItem.class)
+        assertDoesNotThrow(() -> find(SideNavItem.class)
                 .withPropertyValue(SideNavItem::getLabel, "Find Owners").single(),
                 "Missing Find Owners navigation item");
-        assertDoesNotThrow(() -> $(SideNavItem.class)
+        assertDoesNotThrow(() -> find(SideNavItem.class)
                 .withPropertyValue(SideNavItem::getLabel, "Veterinarians").single(),
                 "Missing Veterinarians navigation item");
-        assertDoesNotThrow(() -> $(SideNavItem.class)
+        assertDoesNotThrow(() -> find(SideNavItem.class)
                 .withPropertyValue(SideNavItem::getLabel, "Error").single(),
                 "Missing Error navigation item");
     }

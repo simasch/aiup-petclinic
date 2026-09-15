@@ -31,32 +31,32 @@ class UC004FindOwnersByLastNameTest extends PetClinicTestBase {
     @UseCase(id = "UC-004", businessRules = "BR-001")
     void prefixSearchReturnsMatchingOwners() {
         navigate(FindOwnersView.class);
-        test($(TextField.class).withCaption("Last name").single()).setValue("Dav");
-        test($(Button.class).withText("Find Owner").single()).click();
+        test(find(TextField.class).withCaption("Last name").single()).setValue("Dav");
+        test(find(Button.class).withText("Find Owner").single()).click();
 
-        assertTrue($(Grid.class).single().isVisible());
+        assertTrue(find(Grid.class).single().isVisible());
         // Betty Davis + Harold Davis
-        assertEquals(2, test($(Grid.class).single()).size());
+        assertEquals(2, test(find(Grid.class).single()).size());
     }
 
     @Test
     @UseCase(id = "UC-004", businessRules = "BR-003", scenario = "A1: Empty Last-Name Search")
     void emptyLastNameReturnsAllOwners() {
         navigate(FindOwnersView.class);
-        test($(TextField.class).withCaption("Last name").single()).setValue("");
-        test($(Button.class).withText("Find Owner").single()).click();
+        test(find(TextField.class).withCaption("Last name").single()).setValue("");
+        test(find(Button.class).withText("Find Owner").single()).click();
 
-        assertTrue($(Grid.class).single().isVisible());
+        assertTrue(find(Grid.class).single().isVisible());
         // all 10 seed owners
-        assertEquals(10, test($(Grid.class).single()).size());
+        assertEquals(10, test(find(Grid.class).single()).size());
     }
 
     @Test
     @UseCase(id = "UC-004", scenario = "A2: Exactly One Match")
     void exactlyOneMatchNavigatesDirectlyToOwnerDetails() {
         navigate(FindOwnersView.class);
-        test($(TextField.class).withCaption("Last name").single()).setValue("Fra");
-        test($(Button.class).withText("Find Owner").single()).click();
+        test(find(TextField.class).withCaption("Last name").single()).setValue("Fra");
+        test(find(Button.class).withText("Find Owner").single()).click();
 
         String path = UI.getCurrent().getInternals().getActiveViewLocation().getPath();
         assertEquals("owners/" + OWNER_FRANKLIN_ID, path);
@@ -66,12 +66,12 @@ class UC004FindOwnersByLastNameTest extends PetClinicTestBase {
     @UseCase(id = "UC-004", scenario = "A3: No Match")
     void noMatchAttachesNotFoundToLastNameField() {
         navigate(FindOwnersView.class);
-        test($(TextField.class).withCaption("Last name").single()).setValue("Nonexistent");
-        test($(Button.class).withText("Find Owner").single()).click();
+        test(find(TextField.class).withCaption("Last name").single()).setValue("Nonexistent");
+        test(find(Button.class).withText("Find Owner").single()).click();
 
-        TextField lastNameField = $(TextField.class).withCaption("Last name").single();
+        TextField lastNameField = find(TextField.class).withCaption("Last name").single();
         assertTrue(lastNameField.isInvalid());
         assertEquals("not found", lastNameField.getErrorMessage());
-        assertTrue($(Grid.class).all().isEmpty(), "Expected results grid to be hidden");
+        assertTrue(find(Grid.class).all().isEmpty(), "Expected results grid to be hidden");
     }
 }

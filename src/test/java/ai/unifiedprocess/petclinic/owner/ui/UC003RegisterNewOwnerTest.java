@@ -30,12 +30,12 @@ class UC003RegisterNewOwnerTest extends PetClinicTestBase {
     void addingValidOwnerPersistsAndNavigatesToDetails() {
         navigate(AddOwnerView.class);
 
-        test($(TextField.class).withCaption("First Name").single()).setValue("Jane");
-        test($(TextField.class).withCaption("Last Name").single()).setValue("Whitfield");
-        test($(TextField.class).withCaption("Address").single()).setValue("123 Oak St");
-        test($(TextField.class).withCaption("City").single()).setValue("Madison");
-        test($(TextField.class).withCaption("Telephone").single()).setValue("5551234567");
-        test($(Button.class).withText("Add Owner").single()).click();
+        test(find(TextField.class).withCaption("First Name").single()).setValue("Jane");
+        test(find(TextField.class).withCaption("Last Name").single()).setValue("Whitfield");
+        test(find(TextField.class).withCaption("Address").single()).setValue("123 Oak St");
+        test(find(TextField.class).withCaption("City").single()).setValue("Madison");
+        test(find(TextField.class).withCaption("Telephone").single()).setValue("5551234567");
+        test(find(Button.class).withText("Add Owner").single()).click();
 
         // Post-condition: routed to owners/<newId> (unknown id, but a number).
         String path = UI.getCurrent().getInternals().getActiveViewLocation().getPath();
@@ -45,21 +45,21 @@ class UC003RegisterNewOwnerTest extends PetClinicTestBase {
         // The details view is now the active view — rendered paragraphs verify
         // the values actually round-tripped through the database, without
         // calling any repository directly.
-        $(OwnerDetailsView.class).single();
+        find(OwnerDetailsView.class).single();
         assertDoesNotThrow(
-                () -> $(Paragraph.class).withText("Jane Whitfield").single(),
+                () -> find(Paragraph.class).withText("Jane Whitfield").single(),
                 "Expected owner name to be rendered");
         assertDoesNotThrow(
-                () -> $(Paragraph.class).withText("123 Oak St").single(),
+                () -> find(Paragraph.class).withText("123 Oak St").single(),
                 "Expected address to be rendered");
         assertDoesNotThrow(
-                () -> $(Paragraph.class).withText("Madison").single(),
+                () -> find(Paragraph.class).withText("Madison").single(),
                 "Expected city to be rendered");
         assertDoesNotThrow(
-                () -> $(Paragraph.class).withText("5551234567").single(),
+                () -> find(Paragraph.class).withText("5551234567").single(),
                 "Expected telephone to be rendered");
 
-        assertFalse($(Notification.class).all().isEmpty(),
+        assertFalse(find(Notification.class).all().isEmpty(),
                 "Expected a success notification after create");
     }
 
@@ -68,13 +68,13 @@ class UC003RegisterNewOwnerTest extends PetClinicTestBase {
     void missingRequiredFieldsBlockCreation() {
         navigate(AddOwnerView.class);
         // leave everything blank and submit
-        test($(Button.class).withText("Add Owner").single()).click();
+        test(find(Button.class).withText("Add Owner").single()).click();
 
-        assertTrue($(TextField.class).withCaption("First Name").single().isInvalid());
-        assertTrue($(TextField.class).withCaption("Last Name").single().isInvalid());
-        assertTrue($(TextField.class).withCaption("Address").single().isInvalid());
-        assertTrue($(TextField.class).withCaption("City").single().isInvalid());
-        assertTrue($(TextField.class).withCaption("Telephone").single().isInvalid());
+        assertTrue(find(TextField.class).withCaption("First Name").single().isInvalid());
+        assertTrue(find(TextField.class).withCaption("Last Name").single().isInvalid());
+        assertTrue(find(TextField.class).withCaption("Address").single().isInvalid());
+        assertTrue(find(TextField.class).withCaption("City").single().isInvalid());
+        assertTrue(find(TextField.class).withCaption("Telephone").single().isInvalid());
 
         // Still on the add-owner view: no navigation = nothing persisted.
         assertEquals("owners/new",
@@ -86,16 +86,16 @@ class UC003RegisterNewOwnerTest extends PetClinicTestBase {
     void telephoneMustBeTenDigits() {
         navigate(AddOwnerView.class);
 
-        test($(TextField.class).withCaption("First Name").single()).setValue("Jane");
-        test($(TextField.class).withCaption("Last Name").single()).setValue("Whitfield");
-        test($(TextField.class).withCaption("Address").single()).setValue("123 Oak St");
-        test($(TextField.class).withCaption("City").single()).setValue("Madison");
+        test(find(TextField.class).withCaption("First Name").single()).setValue("Jane");
+        test(find(TextField.class).withCaption("Last Name").single()).setValue("Whitfield");
+        test(find(TextField.class).withCaption("Address").single()).setValue("123 Oak St");
+        test(find(TextField.class).withCaption("City").single()).setValue("Madison");
         // TextField.allowedCharPattern restricts input to digits, but it does
         // not enforce the length, so short numbers still reach validation.
-        test($(TextField.class).withCaption("Telephone").single()).setValue("555");
-        test($(Button.class).withText("Add Owner").single()).click();
+        test(find(TextField.class).withCaption("Telephone").single()).setValue("555");
+        test(find(Button.class).withText("Add Owner").single()).click();
 
-        assertTrue($(TextField.class).withCaption("Telephone").single().isInvalid(),
+        assertTrue(find(TextField.class).withCaption("Telephone").single().isInvalid(),
                 "Expected telephone field to be flagged invalid for non-10-digit value");
         // Still on the add-owner view: no navigation = nothing persisted.
         assertEquals("owners/new",

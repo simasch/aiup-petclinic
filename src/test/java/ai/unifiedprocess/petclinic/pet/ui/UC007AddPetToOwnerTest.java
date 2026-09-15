@@ -40,10 +40,10 @@ class UC007AddPetToOwnerTest extends PetClinicTestBase {
         navigate(AddPetView.class,
                 Map.of(OwnerRouteParameters.OWNER_ID, Integer.toString(OWNER_DAVIS_HAROLD_ID)));
 
-        test($(TextField.class).withCaption("Name").single()).setValue("Buddy");
-        test($(DatePicker.class).withCaption("Birth Date").single()).setValue(LocalDate.of(2022, 6, 1));
-        test($(ComboBox.class).withCaption("Type").single()).selectItem("dog");
-        test($(Button.class).withText("Add Pet").single()).click();
+        test(find(TextField.class).withCaption("Name").single()).setValue("Buddy");
+        test(find(DatePicker.class).withCaption("Birth Date").single()).setValue(LocalDate.of(2022, 6, 1));
+        test(find(ComboBox.class).withCaption("Type").single()).selectItem("dog");
+        test(find(Button.class).withText("Add Pet").single()).click();
 
         // Returned to Harold's details page
         assertEquals("owners/" + OWNER_DAVIS_HAROLD_ID,
@@ -55,8 +55,8 @@ class UC007AddPetToOwnerTest extends PetClinicTestBase {
         // through the PetRepository. Pet names are rendered as H3; the
         // static "Pets and Visits" section header is also an H3 and is
         // filtered out.
-        OwnerDetailsView details = $(OwnerDetailsView.class).single();
-        List<String> petNames = $(H3.class).from(details).all().stream()
+        OwnerDetailsView details = find(OwnerDetailsView.class).single();
+        List<String> petNames = find(H3.class).from(details).all().stream()
                 .map(H3::getText)
                 .filter(t -> !t.equals("Pets and Visits"))
                 .toList();
@@ -70,12 +70,12 @@ class UC007AddPetToOwnerTest extends PetClinicTestBase {
         navigate(AddPetView.class,
                 Map.of(OwnerRouteParameters.OWNER_ID, Integer.toString(OWNER_DAVIS_BETTY_ID)));
 
-        test($(TextField.class).withCaption("Name").single()).setValue("Basil");
-        test($(DatePicker.class).withCaption("Birth Date").single()).setValue(LocalDate.of(2023, 2, 2));
-        test($(ComboBox.class).withCaption("Type").single()).selectItem("cat");
-        test($(Button.class).withText("Add Pet").single()).click();
+        test(find(TextField.class).withCaption("Name").single()).setValue("Basil");
+        test(find(DatePicker.class).withCaption("Birth Date").single()).setValue(LocalDate.of(2023, 2, 2));
+        test(find(ComboBox.class).withCaption("Type").single()).selectItem("cat");
+        test(find(Button.class).withText("Add Pet").single()).click();
 
-        TextField nameField = $(TextField.class).withCaption("Name").single();
+        TextField nameField = find(TextField.class).withCaption("Name").single();
         assertTrue(nameField.isInvalid());
         assertEquals("already exists", nameField.getErrorMessage());
         // Still on the add-pet view (no navigation happened).
@@ -89,14 +89,14 @@ class UC007AddPetToOwnerTest extends PetClinicTestBase {
         navigate(AddPetView.class,
                 Map.of(OwnerRouteParameters.OWNER_ID, Integer.toString(OWNER_DAVIS_HAROLD_ID)));
 
-        test($(TextField.class).withCaption("Name").single()).setValue("Futuro");
+        test(find(TextField.class).withCaption("Name").single()).setValue("Futuro");
         // Bypass the DatePickerTester (which enforces the component's max)
         // so we can simulate submitting a future date directly.
-        $(DatePicker.class).withCaption("Birth Date").single().setValue(LocalDate.now().plusDays(7));
-        test($(ComboBox.class).withCaption("Type").single()).selectItem("dog");
-        test($(Button.class).withText("Add Pet").single()).click();
+        find(DatePicker.class).withCaption("Birth Date").single().setValue(LocalDate.now().plusDays(7));
+        test(find(ComboBox.class).withCaption("Type").single()).selectItem("dog");
+        test(find(Button.class).withText("Add Pet").single()).click();
 
-        assertTrue($(DatePicker.class).withCaption("Birth Date").single().isInvalid());
+        assertTrue(find(DatePicker.class).withCaption("Birth Date").single().isInvalid());
         assertEquals("owners/" + OWNER_DAVIS_HAROLD_ID + "/pets/new",
                 UI.getCurrent().getInternals().getActiveViewLocation().getPath());
     }
@@ -107,12 +107,12 @@ class UC007AddPetToOwnerTest extends PetClinicTestBase {
         navigate(AddPetView.class,
                 Map.of(OwnerRouteParameters.OWNER_ID, Integer.toString(OWNER_DAVIS_HAROLD_ID)));
 
-        test($(TextField.class).withCaption("Name").single()).setValue("Buddy");
-        test($(DatePicker.class).withCaption("Birth Date").single()).setValue(LocalDate.of(2022, 6, 1));
+        test(find(TextField.class).withCaption("Name").single()).setValue("Buddy");
+        test(find(DatePicker.class).withCaption("Birth Date").single()).setValue(LocalDate.of(2022, 6, 1));
         // intentionally skip type
-        test($(Button.class).withText("Add Pet").single()).click();
+        test(find(Button.class).withText("Add Pet").single()).click();
 
-        assertTrue($(ComboBox.class).withCaption("Type").single().isInvalid());
+        assertTrue(find(ComboBox.class).withCaption("Type").single().isInvalid());
         assertEquals("owners/" + OWNER_DAVIS_HAROLD_ID + "/pets/new",
                 UI.getCurrent().getInternals().getActiveViewLocation().getPath());
     }

@@ -42,10 +42,10 @@ class UC009BookVisitForPetTest extends PetClinicTestBase {
                 OwnerRouteParameters.PET_ID, Integer.toString(PET_MAX_ID)));
 
         // BR-002: date pre-populated with today
-        assertEquals(LocalDate.now(), $(DatePicker.class).withCaption("Date").single().getValue());
+        assertEquals(LocalDate.now(), find(DatePicker.class).withCaption("Date").single().getValue());
 
-        test($(TextField.class).withCaption("Description").single()).setValue("Annual check-up");
-        test($(Button.class).withText("Add Visit").single()).click();
+        test(find(TextField.class).withCaption("Description").single()).setValue("Annual check-up");
+        test(find(Button.class).withText("Add Visit").single()).click();
 
         // Returned to Coleman's details page
         assertEquals("owners/" + OWNER_COLEMAN_ID,
@@ -55,9 +55,9 @@ class UC009BookVisitForPetTest extends PetClinicTestBase {
         // Visits are rendered as Paragraph("yyyy-MM-dd — description"); a
         // fresh paragraph matching today + "Annual check-up" proves the
         // insert landed in the database without touching VisitRepository.
-        OwnerDetailsView details = $(OwnerDetailsView.class).single();
+        OwnerDetailsView details = find(OwnerDetailsView.class).single();
         String expectedVisit = LocalDate.now() + " \u2014 Annual check-up";
-        List<String> visitLines = $(Paragraph.class).from(details).all().stream()
+        List<String> visitLines = find(Paragraph.class).from(details).all().stream()
                 .map(Paragraph::getText)
                 .filter(t -> t.contains("\u2014"))
                 .toList();
@@ -72,9 +72,9 @@ class UC009BookVisitForPetTest extends PetClinicTestBase {
                 OwnerRouteParameters.OWNER_ID, Integer.toString(OWNER_COLEMAN_ID),
                 OwnerRouteParameters.PET_ID, Integer.toString(PET_MAX_ID)));
 
-        test($(Button.class).withText("Add Visit").single()).click();
+        test(find(Button.class).withText("Add Visit").single()).click();
 
-        assertTrue($(TextField.class).withCaption("Description").single().isInvalid());
+        assertTrue(find(TextField.class).withCaption("Description").single().isInvalid());
         // Still on the add-visit view — no navigation = nothing persisted.
         assertEquals(
                 "owners/" + OWNER_COLEMAN_ID + "/pets/" + PET_MAX_ID + "/visits/new",
@@ -92,7 +92,7 @@ class UC009BookVisitForPetTest extends PetClinicTestBase {
                 OwnerRouteParameters.forPet(OWNER_FRANKLIN_ID, PET_MAX_ID));
 
         assertDoesNotThrow(
-                () -> $(NotFoundErrorView.class).single(),
+                () -> find(NotFoundErrorView.class).single(),
                 "Expected NotFoundErrorView for mismatched owner/pet");
     }
 }

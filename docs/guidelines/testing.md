@@ -16,7 +16,7 @@ anything that genuinely needs a browser (client-side rendering, keyboard focus, 
 
 ## Framework
 
-- **Vaadin Browserless Testing** (`browserless-test-junit6`) is the default for Vaadin view tests — server-side, no
+- **Vaadin Browserless Testing** (`browserless-test-junit6` + `browserless-test-spring`) is the default for Vaadin view tests — server-side, no
   browser, no servlet container.
   Reference: https://vaadin.com/docs/latest/flow/testing/browserless/getting-started
 - View tests extend `PetClinicTestBase` (or `SpringBrowserlessTest` directly for tests that don't touch the DB, in
@@ -83,47 +83,47 @@ Test seed data lives **only** on the test classpath (`src/test/resources/db/migr
   `navigate(MyView.class, Map.of(OwnerRouteParameters.OWNER_ID, "6"))` for parameterized routes.
 - `test(component).setValue(...)` / `test(component).click()` / `test(combo).selectItem(...)` — wrap a component to
   simulate user interaction. Prefer this over calling setters/listeners directly.
-- `$(Type.class)` — query the current UI tree by type. Chainable matchers:
+- `find(Type.class)` — query the current UI tree by type. Chainable matchers:
     - `withPropertyValue(Type::getter, value)` — type-safe, preferred.
     - `withAttribute("name", "value")` — only when no getter exists.
     - `withId(...)`, `withText(...)`, `withValue(...)`, `withClassName(...)`,
       `withCondition(...)`, `withCaption(...)`.
       Terminators: `single()` (exactly one) or `atIndex(int)`. **`first()` is deprecated.**
-- `$(Type.class).from(parent)` — scope the query to a sub-tree rooted at `parent`.
+- `find(Type.class).from(parent)` — scope the query to a sub-tree rooted at `parent`.
 - `fireShortcut(Key.ENTER)` / `fireShortcut(Key.KEY_S, KeyModifier.CONTROL)`
   — simulate keyboard shortcuts.
 
 ## No direct field access — use locators
 
-All component fields on views and forms are **private**. Tests must **never** access view fields directly. Use `$()`
+All component fields on views and forms are **private**. Tests must **never** access view fields directly. Use `find()`
 locators to find components in the live UI tree. This decouples the test from the view's internal layout and exercises
 the render path end-to-end.
 
-- Find input components by caption (label): `$(TextField.class).withCaption("Last name").single()`
-- Find buttons by text: `$(Button.class).withText("Find Owner").single()`
-- Find a grid (usually one per view): `$(Grid.class).single()`
-- Scope to a parent: `$(H3.class).from(details).all()`
-- Verify rendered text: `assertDoesNotThrow(() -> $(Paragraph.class).withText("Jane Doe").single(), "message")`
+- Find input components by caption (label): `find(TextField.class).withCaption("Last name").single()`
+- Find buttons by text: `find(Button.class).withText("Find Owner").single()`
+- Find a grid (usually one per view): `find(Grid.class).single()`
+- Scope to a parent: `find(H3.class).from(details).all()`
+- Verify rendered text: `assertDoesNotThrow(() -> find(Paragraph.class).withText("Jane Doe").single(), "message")`
 
 Interact through the tester wrapper:
 
 ```java
-test($(TextField.class).withCaption("First Name").single()).setValue("Jane");
-test($(Button.class).withText("Add Owner").single()).click();
-test($(ComboBox.class).withCaption("Type").single()).selectItem("dog");
+test(find(TextField.class).withCaption("First Name").single()).setValue("Jane");
+test(find(Button.class).withText("Add Owner").single()).click();
+test(find(ComboBox.class).withCaption("Type").single()).selectItem("dog");
 ```
 
 Check validation state via the locator:
 
 ```java
-assertTrue($(TextField.class).withCaption("Telephone").single().isInvalid());
-assertEquals("not found", $(TextField.class).withCaption("Last name").single().getErrorMessage());
+assertTrue(find(TextField.class).withCaption("Telephone").single().isInvalid());
+assertEquals("not found", find(TextField.class).withCaption("Last name").single().getErrorMessage());
 ```
 
-## Scoping with `from()` vs. global `$()`
+## Scoping with `from()` vs. global `find()`
 
-Use `$(Type.class).from(parent)` when the view contains multiple instances of the same component type (e.g. two `H3`
-elements, or fields with the same label in different forms). Global `$()` is fine when the component type or
+Use `find(Type.class).from(parent)` when the view contains multiple instances of the same component type (e.g. two `H3`
+elements, or fields with the same label in different forms). Global `find()` is fine when the component type or
 caption is unique in the view.
 
 ## Positive vs. negative locator assertions
@@ -132,15 +132,15 @@ caption is unique in the view.
 
 ```java
 assertDoesNotThrow(
-        () -> $(Image.class).withPropertyValue(Image::getSrc, "images/pets.png").single(),
+        () -> find(Image.class).withPropertyValue(Image::getSrc, "images/pets.png").single(),
         "Expected exactly one decorative pets image");
 ```
 
-**Component should NOT exist** — invisible components are excluded from `$()` queries, so verify the query returns
+**Component should NOT exist** — invisible components are excluded from `find()` queries, so verify the query returns
 nothing:
 
 ```java
-assertTrue($(Grid.class).all().isEmpty(), "Expected results grid to be hidden");
+assertTrue(find(Grid.class).all().isEmpty(), "Expected results grid to be hidden");
 ```
 
 ## No public test-only getters
@@ -155,17 +155,17 @@ Do **not** add public getters to view classes so tests can reach private fields 
 - **Always wrap locator calls in `assertDoesNotThrow`** with a message:
   ```java
   assertDoesNotThrow(
-          () -> $(Image.class).withPropertyValue(Image::getSrc, "images/pets.png").single(),
+          () -> find(Image.class).withPropertyValue(Image::getSrc, "images/pets.png").single(),
           "Expected exactly one decorative pets image");
   assertDoesNotThrow(
           () -> navigate(WelcomeView.class),
           "Expected root route to resolve to WelcomeView");
   ```
-  `$(…).single()` throws `NoSuchElementException` on its own, but a bare call reads as a dead statement and the CI
+  `find(…).single()` throws `NoSuchElementException` on its own, but a bare call reads as a dead statement and the CI
   failure is uninformative.
 - **Never `.all().stream().anyMatch(...)`.** Chain the locator matchers instead — it's type-safe and the failure message
   is informative.
-- **Rendered-state assertions** go through `$(Paragraph.class)`, `$(H3.class)`, etc. and assert on `.getText()` so the
+- **Rendered-state assertions** go through `find(Paragraph.class)`, `find(H3.class)`, etc. and assert on `.getText()` so the
   render path is exercised end-to-end.
 - **Navigation assertions** check
   `UI.getCurrent().getInternals().getActiveViewLocation().getPath()`, not domain state pulled back out of the view.

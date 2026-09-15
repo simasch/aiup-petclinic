@@ -33,12 +33,12 @@ class UC006UpdateOwnerTest extends PetClinicTestBase {
                 Map.of(OwnerRouteParameters.OWNER_ID, Integer.toString(OWNER_DAVIS_HAROLD_ID)));
 
         // fields pre-filled from the seed data
-        assertEquals("Harold", $(TextField.class).withCaption("First Name").single().getValue());
-        assertEquals("Davis", $(TextField.class).withCaption("Last Name").single().getValue());
+        assertEquals("Harold", find(TextField.class).withCaption("First Name").single().getValue());
+        assertEquals("Davis", find(TextField.class).withCaption("Last Name").single().getValue());
 
-        test($(TextField.class).withCaption("First Name").single()).setValue("Harry");
-        test($(TextField.class).withCaption("City").single()).setValue("Springfield");
-        test($(Button.class).withText("Update Owner").single()).click();
+        test(find(TextField.class).withCaption("First Name").single()).setValue("Harry");
+        test(find(TextField.class).withCaption("City").single()).setValue("Springfield");
+        test(find(Button.class).withText("Update Owner").single()).click();
 
         // Returned to owner details
         assertEquals("owners/" + OWNER_DAVIS_HAROLD_ID,
@@ -46,12 +46,12 @@ class UC006UpdateOwnerTest extends PetClinicTestBase {
 
         // The details view now reflects the persisted update — rendered
         // paragraphs verify the round-trip without the repo.
-        $(OwnerDetailsView.class).single();
+        find(OwnerDetailsView.class).single();
         assertDoesNotThrow(
-                () -> $(Paragraph.class).withText("Harry Davis").single(),
+                () -> find(Paragraph.class).withText("Harry Davis").single(),
                 "Expected updated name to be rendered");
         assertDoesNotThrow(
-                () -> $(Paragraph.class).withText("Springfield").single(),
+                () -> find(Paragraph.class).withText("Springfield").single(),
                 "Expected updated city to be rendered");
     }
 
@@ -61,10 +61,10 @@ class UC006UpdateOwnerTest extends PetClinicTestBase {
         navigate(EditOwnerView.class,
                 Map.of(OwnerRouteParameters.OWNER_ID, Integer.toString(OWNER_DAVIS_HAROLD_ID)));
 
-        test($(TextField.class).withCaption("Last Name").single()).setValue("");
-        test($(Button.class).withText("Update Owner").single()).click();
+        test(find(TextField.class).withCaption("Last Name").single()).setValue("");
+        test(find(Button.class).withText("Update Owner").single()).click();
 
-        assertTrue($(TextField.class).withCaption("Last Name").single().isInvalid());
+        assertTrue(find(TextField.class).withCaption("Last Name").single().isInvalid());
         // Still on edit view — no save happened.
         assertEquals("owners/" + OWNER_DAVIS_HAROLD_ID + "/edit",
                 UI.getCurrent().getInternals().getActiveViewLocation().getPath());
@@ -73,7 +73,7 @@ class UC006UpdateOwnerTest extends PetClinicTestBase {
         navigate(OwnerDetailsView.class,
                 Map.of(OwnerRouteParameters.OWNER_ID, Integer.toString(OWNER_DAVIS_HAROLD_ID)));
         assertDoesNotThrow(
-                () -> $(Paragraph.class).withText("Harold Davis").single(),
+                () -> find(Paragraph.class).withText("Harold Davis").single(),
                 "Expected seed name to remain unchanged");
     }
 }

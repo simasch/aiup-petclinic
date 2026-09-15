@@ -36,16 +36,16 @@ class UC005ViewOwnerDetailsTest extends PetClinicTestBase {
                 Map.of(OwnerRouteParameters.OWNER_ID, Integer.toString(OWNER_COLEMAN_ID)));
 
         assertDoesNotThrow(
-                () -> $(Paragraph.class).withText("Jean Coleman").single(),
+                () -> find(Paragraph.class).withText("Jean Coleman").single(),
                 "Expected owner name to be rendered");
         assertDoesNotThrow(
-                () -> $(Paragraph.class).withText("105 N. Lake St.").single(),
+                () -> find(Paragraph.class).withText("105 N. Lake St.").single(),
                 "Expected address to be rendered");
         assertDoesNotThrow(
-                () -> $(Paragraph.class).withText("Monona").single(),
+                () -> find(Paragraph.class).withText("Monona").single(),
                 "Expected city to be rendered");
         assertDoesNotThrow(
-                () -> $(Paragraph.class).withText("6085552654").single(),
+                () -> find(Paragraph.class).withText("6085552654").single(),
                 "Expected telephone to be rendered");
     }
 
@@ -55,7 +55,7 @@ class UC005ViewOwnerDetailsTest extends PetClinicTestBase {
         navigate(OwnerDetailsView.class,
                 Map.of(OwnerRouteParameters.OWNER_ID, Integer.toString(OWNER_COLEMAN_ID)));
 
-        List<String> names = $(H3.class).all().stream()
+        List<String> names = find(H3.class).all().stream()
                 .map(H3::getText)
                 .filter(t -> !t.equals("Pets and Visits"))
                 .toList();
@@ -71,7 +71,7 @@ class UC005ViewOwnerDetailsTest extends PetClinicTestBase {
         // Max's two seed visits were inserted newest-first (2011-03-04 before
         // 2009-06-04), so this test actually exercises the ORDER BY in
         // VisitRepository. Max is alphabetically first, so its visits lead.
-        List<String> visitTexts = $(Paragraph.class).all().stream()
+        List<String> visitTexts = find(Paragraph.class).all().stream()
                 .map(Paragraph::getText)
                 .filter(t -> t.contains("\u2014"))
                 .toList();
@@ -91,12 +91,12 @@ class UC005ViewOwnerDetailsTest extends PetClinicTestBase {
                 OwnerDetailsView.class, OwnerRouteParameters.forOwner(99999));
 
         assertDoesNotThrow(
-                () -> $(NotFoundErrorView.class).single(),
+                () -> find(NotFoundErrorView.class).single(),
                 "Expected NotFoundErrorView to be rendered for unknown owner id");
-        NotFoundErrorView errorView = $(NotFoundErrorView.class).single();
-        H2 heading = $(H2.class).from(errorView).single();
+        NotFoundErrorView errorView = find(NotFoundErrorView.class).single();
+        H2 heading = find(H2.class).from(errorView).single();
         assertEquals("Something happened...", heading.getText());
-        Paragraph message = $(Paragraph.class).from(errorView)
+        Paragraph message = find(Paragraph.class).from(errorView)
                 .withCondition(p -> p.getText().contains("99999")).single();
         assertTrue(message.getText().contains("99999"),
                 "Expected error message to include the missing owner id, got: "
@@ -110,7 +110,7 @@ class UC005ViewOwnerDetailsTest extends PetClinicTestBase {
                 Map.of(OwnerRouteParameters.OWNER_ID, Integer.toString(OWNER_COLEMAN_ID)));
 
         assertDoesNotThrow(
-                () -> test($(Button.class).withText("Edit Owner").single()).click());
+                () -> test(find(Button.class).withText("Edit Owner").single()).click());
         assertEquals("owners/" + OWNER_COLEMAN_ID + "/edit",
                 com.vaadin.flow.component.UI.getCurrent().getInternals().getActiveViewLocation().getPath());
     }

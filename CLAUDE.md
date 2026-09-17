@@ -20,20 +20,13 @@ something, read the relevant spec first:
 - `docs/test_cases/TC-NNN-*.md` — end-to-end journeys spanning several use
   cases; each is verified by a Playwright `TC<NNN><Name>IT`.
 
-Two sensors (`./mvnw test`) enforce the link between the two.
-`UseCaseTraceabilityTest`: every `@UseCase` annotation must point at a use case, flow,
-and business rule that really exist, and a use case with `Status: Done` or
-`Tested` must have a test behind its main scenario, *every* alternative flow,
-and *every* business rule. `TestCaseTraceabilityTest`: every `UC-NNN` link in a
-test case's Flow must resolve, a test case with `Status: Automated` must have a
-`TC<NNN><Name>IT` class behind it (and vice versa — no orphan journeys), and an
-automated test case may only walk through use cases that are themselves done.
-`@UseCase` belongs on a `UC<NNN><Name>Test` method, `@TestCase` on a
-`TC<NNN><Name>IT` class, and each sensor rejects its own annotation
-anywhere else. `@TestCase(useCases = ...)` must name exactly the use cases
-the test case's Flow walks through.
-The `Status:` line is therefore an assertion that switches the sensor on — do
-not set it by hand without running `aiup-vaadin-jooq:coverage-check` first.
+Two sensors (`./mvnw test`) enforce the link between specs and tests:
+`UseCaseTraceabilityTest` and `TestCaseTraceabilityTest`. Because of them a
+`Status:` line (`Done`/`Tested` on a use case, `Automated` on a test case) is
+an assertion that switches the sensor on, not a label — never set one by hand
+without running `aiup-vaadin-jooq:coverage-check` first. What each sensor
+checks is in
+[`docs/guidelines/testing.md`](docs/guidelines/testing.md#the-traceability-sensors).
 
 If a use case and the code disagree, the use case wins unless the user says
 otherwise.

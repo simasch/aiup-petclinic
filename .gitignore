@@ -1,0 +1,8 @@
+.idea
+target
+src/main/frontend/generated
+src/main/frontend/index.html
+.classpath
+.project
+.settings
+/src/main/bundles/prod.bundle

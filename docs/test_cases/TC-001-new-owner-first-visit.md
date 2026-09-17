@@ -5,7 +5,7 @@
 **ID:** TC-001  
 **Goal:** A clinic user registers a new owner, finds them again by last name, adds a pet and books the pet's first visit — verifying that owner, pet and visit are linked end-to-end and visible on the Owner Details view.  
 **Priority:** Critical  
-**Status:** Approved
+**Status:** Automated
 
 ## Roles
 

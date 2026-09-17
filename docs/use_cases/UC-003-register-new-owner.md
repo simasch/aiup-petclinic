@@ -51,11 +51,11 @@
 
 ### BR-001: Mandatory Fields
 
-First name, last name, address, city, and telephone are required.
+Realizes [GR-004: Complete Owner Contact Details](../business_rules.md#gr-004-complete-owner-contact-details).
 
 ### BR-002: Telephone Format
 
-Telephone must be exactly 10 digits.
+Realizes [GR-005: Telephone Format](../business_rules.md#gr-005-telephone-format).
 
 ### BR-003: Server-Assigned Identifier
 

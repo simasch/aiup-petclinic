@@ -3,6 +3,7 @@ package ai.unifiedprocess.petclinic.vet.domain;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -16,6 +17,7 @@ import static org.jooq.impl.DSL.select;
  * jOOQ-backed persistence for {@link Vet}. Feeds the Veterinarians grid (UC-002).
  */
 @Repository
+@Transactional(readOnly = true)
 public class VetRepository {
 
     private final DSLContext dsl;

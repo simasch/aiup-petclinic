@@ -48,8 +48,12 @@
 
 ### BR-001: Visit Ordering
 
-Visits for each pet are listed in chronological order (ascending visit date).
+Realizes [GR-003: Deterministic Ordering](../business_rules.md#gr-003-deterministic-ordering).
+
+The order in question is a pet's visits, by ascending visit date.
 
 ### BR-002: Pet Ordering
 
-An owner's pets are listed alphabetically by name.
+Realizes [GR-003: Deterministic Ordering](../business_rules.md#gr-003-deterministic-ordering).
+
+The order in question is an owner's pets, alphabetically by name.

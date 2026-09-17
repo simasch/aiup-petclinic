@@ -5,6 +5,9 @@ import ai.unifiedprocess.petclinic.TestcontainersConfiguration;
 import ai.unifiedprocess.petclinic.UseCase;
 import ai.unifiedprocess.petclinic.owner.ui.OwnerDetailsView;
 import ai.unifiedprocess.petclinic.owner.ui.OwnerRouteParameters;
+import ai.unifiedprocess.petclinic.pet.domain.Pet;
+import ai.unifiedprocess.petclinic.pet.domain.PetRepository;
+import ai.unifiedprocess.petclinic.pet.domain.PetType;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -12,14 +15,17 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.textfield.TextField;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -33,6 +39,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
 class UC007AddPetToOwnerTest extends PetClinicTestBase {
+
+    @Autowired
+    private PetRepository petRepository;
 
     @Test
     @UseCase(id = "UC-007")
@@ -81,6 +90,22 @@ class UC007AddPetToOwnerTest extends PetClinicTestBase {
         // Still on the add-pet view (no navigation happened).
         assertEquals("owners/" + OWNER_DAVIS_BETTY_ID + "/pets/new",
                 UI.getCurrent().getInternals().getActiveViewLocation().getPath());
+    }
+
+    @Test
+    @UseCase(id = "UC-007", businessRules = "BR-001", scenario = "A1: Duplicate Pet Name for Owner")
+    void duplicatePetNameIsRejectedByTheDatabaseWhateverTheCase() {
+        // BR-001 compares case-insensitively, so the database backstop has to as
+        // well: pets_owner_name_unique indexes lower(name). Goes straight to the
+        // repository — the form check above never lets a duplicate reach the DB,
+        // which is exactly why the constraint needs its own test.
+        PetType cat = petRepository.findAllTypes().stream()
+                .filter(type -> type.name().equals("cat"))
+                .findFirst()
+                .orElseThrow();
+
+        assertThrows(DataIntegrityViolationException.class, () -> petRepository.insert(
+                new Pet(null, "BASIL", LocalDate.of(2023, 2, 2), cat, OWNER_DAVIS_BETTY_ID)));
     }
 
     @Test

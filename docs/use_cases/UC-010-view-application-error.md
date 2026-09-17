@@ -58,7 +58,7 @@ _None — the error view is itself the terminal state for failed navigations._
 
 ### BR-001: Anonymous Access
 
-The application error view is reachable without authentication. This matches UC-001 and UC-002.
+Realizes [GR-001: Anonymous Access](../business_rules.md#gr-001-anonymous-access).
 
 ### BR-002: Navigation Shell Preserved
 

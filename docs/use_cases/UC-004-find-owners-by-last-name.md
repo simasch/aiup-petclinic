@@ -77,8 +77,9 @@ Searches use a case-sensitive "starts with" match on last name; full-string matc
 
 ### BR-002: Lazy Loading
 
-The Owners List is rendered with infinite scrolling: rows are fetched lazily from the backend as the user scrolls. There
-are no user-visible page controls and no fixed page size.
+Realizes [GR-002: Lazy Loading of Lists](../business_rules.md#gr-002-lazy-loading-of-lists).
+
+The list in question is the Owners List.
 
 ### BR-003: Empty Search Returns All
 

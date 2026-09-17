@@ -2,6 +2,7 @@ package ai.unifiedprocess.petclinic.pet.domain;
 
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +18,7 @@ import static org.jooq.impl.DSL.row;
  * and UC-007/UC-008.
  */
 @Repository
+@Transactional(readOnly = true)
 public class PetRepository {
 
     private final DSLContext dsl;
@@ -70,6 +72,7 @@ public class PetRepository {
         return dsl.fetchExists(dsl.selectFrom(PETS).where(condition));
     }
 
+    @Transactional
     public Integer insert(Pet pet) {
         return dsl.insertInto(PETS)
                 .set(PETS.NAME, pet.name())
@@ -88,6 +91,7 @@ public class PetRepository {
      * overwritten. Writing null is not an option either way: the column is
      * NOT NULL.
      */
+    @Transactional
     public void update(Pet pet) {
         var update = dsl.update(PETS)
                 .set(PETS.NAME, pet.name())

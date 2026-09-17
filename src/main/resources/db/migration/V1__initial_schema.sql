@@ -29,11 +29,14 @@ CREATE TABLE pets (
     name       VARCHAR(30) NOT NULL,
     birth_date DATE,
     type_id    INTEGER     NOT NULL REFERENCES types (id),
-    owner_id   INTEGER     NOT NULL REFERENCES owners (id),
-    CONSTRAINT pets_owner_name_unique UNIQUE (owner_id, name)
+    owner_id   INTEGER     NOT NULL REFERENCES owners (id)
 );
 
-CREATE INDEX pets_owner_id_idx ON pets (owner_id);
+-- UC-007 / UC-008 BR-001: a pet's name is unique per owner, case-insensitively.
+-- A UNIQUE table constraint compares the stored spelling, so the rule needs a
+-- functional index. It leads with owner_id and therefore also serves the
+-- lookups by owner.
+CREATE UNIQUE INDEX pets_owner_name_unique ON pets (owner_id, lower(name));
 
 CREATE TABLE visits (
     id          INTEGER      PRIMARY KEY DEFAULT nextval('visits_seq'),

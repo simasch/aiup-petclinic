@@ -3,6 +3,7 @@ package ai.unifiedprocess.petclinic.owner.domain;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +18,7 @@ import static org.jooq.impl.DSL.*;
  * jOOQ-backed persistence for {@link Owner}. Feeds UC-003…UC-006.
  */
 @Repository
+@Transactional(readOnly = true)
 public class OwnerRepository {
 
     private final DSLContext dsl;
@@ -87,6 +89,7 @@ public class OwnerRepository {
     }
 
     /** Insert the owner and return the generated id. */
+    @Transactional
     public Integer insert(Owner owner) {
         return dsl.insertInto(OWNERS)
                 .set(OWNERS.FIRST_NAME, owner.firstName())
@@ -99,6 +102,7 @@ public class OwnerRepository {
                 .getId();
     }
 
+    @Transactional
     public void update(Owner owner) {
         dsl.update(OWNERS)
                 .set(OWNERS.FIRST_NAME, owner.firstName())

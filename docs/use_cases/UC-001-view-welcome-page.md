@@ -38,4 +38,4 @@ own; see Failure Postconditions below and UC-010.
 
 ### BR-001: Anonymous Access
 
-The welcome page is accessible without authentication.
+Realizes [GR-001: Anonymous Access](../business_rules.md#gr-001-anonymous-access).

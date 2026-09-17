@@ -46,13 +46,16 @@
 
 ### BR-001: Lazy Loading
 
-The veterinarians grid is rendered with infinite scrolling: rows are fetched lazily from the backend as the user
-scrolls. There are no user-visible page controls and no fixed page size.
+Realizes [GR-002: Lazy Loading of Lists](../business_rules.md#gr-002-lazy-loading-of-lists).
+
+The list in question is the veterinarians grid.
 
 ### BR-002: Specialty Ordering
 
-Within each vet, specialties are listed alphabetically by name.
+Realizes [GR-003: Deterministic Ordering](../business_rules.md#gr-003-deterministic-ordering).
+
+The order in question is a vet's specialties, alphabetically by name.
 
 ### BR-003: Anonymous Access
 
-Browsing veterinarians does not require authentication.
+Realizes [GR-001: Anonymous Access](../business_rules.md#gr-001-anonymous-access).

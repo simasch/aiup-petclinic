@@ -9,6 +9,7 @@ import com.tngtech.archunit.lang.ArchRule;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.router.Route;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.tngtech.archunit.base.DescribedPredicate.describe;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.assignableTo;
@@ -17,7 +18,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
 /**
- * Executable version of docs/guidelines/architecture.md.
+ * Executable version of docs/architecture/development.md.
  * Every rule references the section it enforces.
  */
 @AnalyzeClasses(
@@ -33,7 +34,7 @@ class ArchitectureTest {
                     .that().resideInAPackage("ai.unifiedprocess.petclinic.(*)..")
                     .and().resideOutsideOfPackage("..core..")
                     .should().resideInAnyPackage("..ui..", "..domain..")
-                    .because("architecture.md: each feature has exactly the sub-packages ui and domain");
+                    .because("development.md: each feature has exactly the sub-packages ui and domain");
 
     @ArchTest
     static final ArchRule noServiceOrDtoLayer =
@@ -41,7 +42,7 @@ class ArchitectureTest {
                     .should().haveSimpleNameEndingWith("Service")
                     .orShould().haveSimpleNameEndingWith("Dto")
                     .orShould().haveSimpleNameEndingWith("DTO")
-                    .because("architecture.md: no separate service/DTO layering beyond ui + domain");
+                    .because("development.md: no separate service/DTO layering beyond ui + domain");
 
     // --- Cross-feature rule ---
 
@@ -50,14 +51,14 @@ class ArchitectureTest {
             noClasses()
                     .that().resideInAPackage("..domain..")
                     .should().dependOnClassesThat().resideInAPackage("..ui..")
-                    .because("architecture.md: domain is the boundary between features");
+                    .because("development.md: domain is the boundary between features");
 
     @ArchTest
     static final ArchRule domainIsFreeOfVaadin =
             noClasses()
                     .that().resideInAPackage("..domain..")
                     .should().dependOnClassesThat().resideInAPackage("com.vaadin..")
-                    .because("architecture.md: domain holds records and jOOQ queries only");
+                    .because("development.md: domain holds records and jOOQ queries only");
 
     // Sliced on domain, not on the whole feature: architecture.md deliberately allows a
     // feature's ui to reach into another feature's domain (OwnerDetailsView -> PetRepository)
@@ -68,7 +69,7 @@ class ArchitectureTest {
             slices()
                     .matching("ai.unifiedprocess.petclinic.(*).domain..")
                     .should().beFreeOfCycles()
-                    .because("architecture.md: domain is the boundary between features");
+                    .because("development.md: domain is the boundary between features");
 
     // --- Data access (jOOQ) ---
 
@@ -77,21 +78,21 @@ class ArchitectureTest {
             noClasses()
                     .should().dependOnClassesThat()
                     .resideInAnyPackage("jakarta.persistence..", "org.springframework.data..")
-                    .because("architecture.md: jOOQ only, no JPA, no Spring Data");
+                    .because("development.md: jOOQ only, no JPA, no Spring Data");
 
     @ArchTest
     static final ArchRule noFetchInto =
             noClasses()
                     .should().callMethodWhere(
                             JavaCall.Predicates.target(HasName.Predicates.name("fetchInto")))
-                    .because("architecture.md: use Records.mapping(Type::new) for compile-time column checking");
+                    .because("development.md: use Records.mapping(Type::new) for compile-time column checking");
 
     @ArchTest
     static final ArchRule domainRecordsAreValidationFree =
             noClasses()
                     .that().resideInAPackage("..domain..")
                     .should().dependOnClassesThat().resideInAPackage("jakarta.validation..")
-                    .because("architecture.md: the Vaadin form is the validation boundary");
+                    .because("development.md: the Vaadin form is the validation boundary");
 
     // --- Persistence stereotype ---
 
@@ -101,14 +102,30 @@ class ArchitectureTest {
                     .that().haveSimpleNameEndingWith("Repository")
                     .should().beAnnotatedWith(Repository.class)
                     .andShould().resideInAPackage("..domain..")
-                    .because("architecture.md: @Repository enables exception translation");
+                    .because("development.md: @Repository enables exception translation");
+
+    @ArchTest
+    static final ArchRule repositoriesAreTransactional =
+            classes()
+                    .that().haveSimpleNameEndingWith("Repository")
+                    .should().beAnnotatedWith(Transactional.class)
+                    .because("development.md: the repository is the transaction boundary");
+
+    // The transaction boundary is the repository, never a view: a view method spans a user
+    // interaction, and a transaction that waits for a user is a transaction held far too long.
+    @ArchTest
+    static final ArchRule viewsAreNotTransactional =
+            noClasses()
+                    .that().resideInAPackage("..ui..")
+                    .should().dependOnClassesThat().haveFullyQualifiedName(Transactional.class.getName())
+                    .because("development.md: transactions are declared in domain, not in ui");
 
     @ArchTest
     static final ArchRule repositoryAnnotationOnlyOnRepositories =
             classes()
                     .that().areAnnotatedWith(Repository.class)
                     .should().haveSimpleNameEndingWith("Repository")
-                    .because("architecture.md: not *Queries, *Dao, *Store");
+                    .because("development.md: not *Queries, *Dao, *Store");
 
     // --- Vaadin view conventions ---
 
@@ -128,5 +145,5 @@ class ArchitectureTest {
                     .should().callMethodWhere(describe("getStyle() on a HasStyle component",
                             (JavaCall<?> call) -> call.getTarget().getName().equals("getStyle")
                                     && assignableTo(HasStyle.class).test(call.getTargetOwner())))
-                    .because("architecture.md: use LumoUtility class names, never getStyle().set()");
+                    .because("development.md: use LumoUtility class names, never getStyle().set()");
 }

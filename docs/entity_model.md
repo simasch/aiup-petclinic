@@ -24,7 +24,7 @@ Represents a pet owner who is registered with the clinic and can bring pets in f
 | city       | City of residence                | String    | 80               | Not Null                 |
 | telephone  | Contact phone number (10 digits) | String    | 20               | Not Null                 |
 
-**Constraints:** Telephone must be exactly 10 digits.
+**Constraints:** Telephone must be exactly 10 digits ([GR-005](business_rules.md#gr-005-telephone-format)).
 
 ### PET
 
@@ -38,7 +38,9 @@ Represents an animal belonging to an owner that can be the subject of veterinary
 | type_id    | Reference to the pet type (species) | Integer   | 10               | Not Null, Foreign Key (PET_TYPE.id) |
 | owner_id   | Reference to the owning owner       | Integer   | 10               | Not Null, Foreign Key (OWNER.id)    |
 
-**Constraints:** A pet's name must be unique within the scope of its owner. Birth date must not be in the future.
+**Constraints:** A pet's name must be unique within the scope of its owner, compared case-insensitively
+([GR-006](business_rules.md#gr-006-unique-pet-name-per-owner)). Birth date must not be in the future
+([GR-007](business_rules.md#gr-007-birth-date-not-in-future)).
 
 ### PET_TYPE
 

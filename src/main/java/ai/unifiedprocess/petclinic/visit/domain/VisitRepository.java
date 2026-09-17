@@ -2,6 +2,7 @@ package ai.unifiedprocess.petclinic.visit.domain;
 
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import static org.jooq.Records.mapping;
  * jOOQ-backed persistence for {@link Visit}. Feeds UC-005 (read) and UC-009 (write).
  */
 @Repository
+@Transactional(readOnly = true)
 public class VisitRepository {
 
     private final DSLContext dsl;
@@ -29,6 +31,7 @@ public class VisitRepository {
                 .fetch(mapping(Visit::new));
     }
 
+    @Transactional
     public Integer insert(Visit visit) {
         return dsl.insertInto(VISITS)
                 .set(VISITS.VISIT_DATE, visit.visitDate())

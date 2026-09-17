@@ -51,8 +51,10 @@
 
 ### BR-001: Mandatory Fields
 
-First name, last name, address, city, and telephone remain required on update.
+Realizes [GR-004: Complete Owner Contact Details](../business_rules.md#gr-004-complete-owner-contact-details).
+
+They remain required on update.
 
 ### BR-002: Telephone Format
 
-Telephone must be exactly 10 digits.
+Realizes [GR-005: Telephone Format](../business_rules.md#gr-005-telephone-format).

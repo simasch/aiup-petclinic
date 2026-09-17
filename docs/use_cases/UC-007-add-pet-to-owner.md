@@ -75,12 +75,12 @@ for it.
 
 ### BR-001: Unique Pet Name per Owner
 
-An owner cannot have two pets with the same name (case-insensitive).
+Realizes [GR-006: Unique Pet Name per Owner](../business_rules.md#gr-006-unique-pet-name-per-owner).
 
 ### BR-002: Birth Date Not in Future
 
-A pet's birth date must be on or before the current date.
+Realizes [GR-007: Birth Date Not in Future](../business_rules.md#gr-007-birth-date-not-in-future).
 
 ### BR-003: Pet Type Required on Creation
 
-A pet type must be chosen when the pet is first created.
+Realizes [GR-008: Pet Type Required on Creation](../business_rules.md#gr-008-pet-type-required-on-creation).

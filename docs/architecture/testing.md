@@ -4,10 +4,10 @@ Read this **before writing or modifying any test** under `src/test/java/`.
 
 ## Two test layers — the class suffix picks the Maven phase
 
-| Layer                 | Suffix   | Runs in         | Framework                                  | Skill                              |
-|-----------------------|----------|-----------------|--------------------------------------------|------------------------------------|
-| Server-side view test | `*Test`  | `./mvnw test`   | Vaadin Browserless (`SpringBrowserlessTest`) | `aiup-vaadin-jooq:browserless-test` |
-| Browser test          | `*IT`    | `./mvnw verify` | Playwright + Drama Finder (`AbstractBasePlaywrightIT`) | `aiup-vaadin-jooq:playwright-test`  |
+| Layer                 | Suffix  | Runs in         | Framework                                              | Skill                               |
+|-----------------------|---------|-----------------|--------------------------------------------------------|-------------------------------------|
+| Server-side view test | `*Test` | `./mvnw test`   | Vaadin Browserless (`SpringBrowserlessTest`)           | `aiup-vaadin-jooq:browserless-test` |
+| Browser test          | `*IT`   | `./mvnw verify` | Playwright + Drama Finder (`AbstractBasePlaywrightIT`) | `aiup-vaadin-jooq:playwright-test`  |
 
 Surefire picks up `*Test`, Failsafe picks up `*IT` (both configured via `spring-boot-starter-parent`; the failsafe
 plugin is declared in `pom.xml`). A browserless test named `*IT` or a Playwright test named `*Test` runs in the wrong
@@ -16,7 +16,8 @@ anything that genuinely needs a browser (client-side rendering, keyboard focus, 
 
 ## Framework
 
-- **Vaadin Browserless Testing** (`browserless-test-junit6` + `browserless-test-spring`) is the default for Vaadin view tests — server-side, no
+- **Vaadin Browserless Testing** (`browserless-test-junit6` + `browserless-test-spring`) is the default for Vaadin view
+  tests — server-side, no
   browser, no servlet container.
   Reference: https://vaadin.com/docs/latest/flow/testing/browserless/getting-started
 - View tests extend `PetClinicTestBase` (or `SpringBrowserlessTest` directly for tests that don't touch the DB, in
@@ -37,13 +38,13 @@ If a view is touched by multiple use cases, write one `UC<NNN>…Test` class per
 covering all of them. Keep the test file in the **same package as the view under test** and name the class after the UC.
 
 **Exception — cross-cutting tests.** `ArchitectureTest` (the ArchUnit rules behind
-[`architecture.md`](architecture.md)) and `AiupPetclinicApplicationTests` verify no single use case, so they sit in the
+[`development.md`](development.md)) and `AiupPetclinicApplicationTests` verify no single use case, so they sit in the
 root package under their own names. Everything that *does* verify a use case follows the format above.
 
 ## `@UseCase` on every test method
 
-Every `@Test` method that verifies UC behaviour must carry `ai.unifiedprocess.petclinic.UseCase` **on the method** (
-never on the class — the annotation is `@Target(METHOD)` and cannot go on a class):
+Every `@Test` method that verifies UC behaviour must carry `ai.unifiedprocess.petclinic.UseCase` **on the method**
+(never on the class — the annotation is `@Target(METHOD)` and cannot go on a class):
 
 ```java
 
@@ -76,7 +77,8 @@ the annotation is `@Target(TYPE)`), because a test case has exactly one coverage
 @TestCase(id = "TC-001", useCases = {"UC-003", "UC-004", "UC-005", "UC-007", "UC-009"})
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = "vaadin.launch-browser=false")
 @Import(TestcontainersConfiguration.class)
-class TC001NewOwnerFirstVisitIT extends AbstractBasePlaywrightIT { ...}
+class TC001NewOwnerFirstVisitIT extends AbstractBasePlaywrightIT { ...
+}
 ```
 
 - `id` — required, matches a `docs/test_cases/TC-NNN-*.md` file, and must agree with the `NNN` in the class name.
@@ -89,14 +91,15 @@ Each sensor rejects its own annotation anywhere else.
 
 ## The traceability sensors
 
-`docs/` is the source of truth, and two sensors make that claim checkable. Both run in `./mvnw test`, both read the
-documents from disk rather than trusting a summary, and both list every violation at once so the failure reads as a
+`docs/` is the source of truth, and three sensors make that claim checkable. All run in `./mvnw test`, all read the
+documents from disk rather than trusting a summary, and all list every violation at once so the failure reads as a
 work list:
 
-| Sensor                     | Reads                                   | Links the two sides by      |
-|----------------------------|-----------------------------------------|-----------------------------|
-| `UseCaseTraceabilityTest`  | `docs/use_cases/` ↔ `@UseCase` methods  | the `@UseCase` annotation   |
-| `TestCaseTraceabilityTest` | `docs/test_cases/` ↔ `TC<NNN>…IT` classes | the class name and `@TestCase` |
+| Sensor                         | Reads                                        | Links the two sides by         |
+|--------------------------------|----------------------------------------------|--------------------------------|
+| `UseCaseTraceabilityTest`      | `docs/use_cases/` ↔ `@UseCase` methods       | the `@UseCase` annotation      |
+| `TestCaseTraceabilityTest`     | `docs/test_cases/` ↔ `TC<NNN>…IT` classes    | the class name and `@TestCase` |
+| `BusinessRuleTraceabilityTest` | `docs/business_rules.md` ↔ `docs/use_cases/` | the `GR-NNN` id and its link   |
 
 The shared markdown handling (the `**Status:**` pattern, the file scan, the violation report) lives in
 `SpecDocuments`, so the document format is described in one place.
@@ -128,11 +131,32 @@ on for that use case; if the tests are not there, `./mvnw test` says so and name
 When the sensor fails, the honest fixes are to write the missing test or to correct the status — never to weaken the
 check.
 
+### Business rules — `BusinessRuleTraceabilityTest`
+
+This one links two documents rather than a document and a test. A rule several use cases share is stated once in
+[`../business_rules.md`](../business_rules.md) as `GR-NNN`; each use case keeps its own `BR-NNN` heading and says which
+shared rule it realizes. That saves the rule from being written down twice — but only while both sides still point at
+each other, and markdown enforces nothing. What the sensor checks:
+
+- every `GR-NNN` a use case references is a `## GR-NNN: …` heading in the catalogue,
+- every link into the catalogue from anywhere under `docs/` lands on a heading that really exists — so a rule cannot be
+  renamed without the documents pointing at it following along,
+- the `**Realized by:**` line of a rule names exactly the use case rules that reference it, in both directions: a claim
+  nobody honours fails, and a reference nobody claims fails too,
+- the summary table at the top agrees with the rules below it — that table is the one duplication the catalogue keeps,
+  which is why it is the one that has to be checked,
+- every rule in the catalogue is realized by **at least two** use cases. A rule one use case needs belongs in that use
+  case, where it is read together with the flow it constrains.
+
+There is no status line here and nothing is exempt: unlike a use case, a shared rule has no "not written yet" state —
+it exists or it does not.
+
 ### Test cases — `TestCaseTraceabilityTest`
 
 A test case has one coverage unit — the journey — realized by one class named `TC<NNN><Name>IT` and carrying
 `@TestCase`. The name and the annotation are both links, and the sensor makes them agree rather than letting either
-drift: the id is checked against the class name, and `useCases` against the Flow table. That itinerary is the annotation's
+drift: the id is checked against the class name, and `useCases` against the Flow table. That itinerary is the
+annotation's
 reason to exist — without it the annotation would only restate the class name, which is a second place for the same fact
 to go wrong. What the sensor checks:
 
@@ -155,8 +179,8 @@ Extend `ai.unifiedprocess.petclinic.PetClinicTestBase`:
 
 - Extends `SpringBrowserlessTest`, carries `@SpringBootTest`, `@Import(TestcontainersConfiguration.class)` and
   `@Transactional` for per-test rollback — subclasses need none of these (repeating them is harmless).
-- Exposes canonical seed-data IDs as constants
-  (`OWNER_FRANKLIN_ID`, `OWNER_COLEMAN_ID`, `PET_SAMANTHA_ID`, `PET_MAX_ID`, …) that match
+- Exposes canonical seed-data IDs as constants (`OWNER_FRANKLIN_ID`, `OWNER_COLEMAN_ID`, `PET_SAMANTHA_ID`,
+  `PET_MAX_ID`, …) that match
   `src/test/resources/db/migration/V2__seed_reference_data.sql`. Add a constant there when a new test needs another
   seed row — never hard-code a numeric ID in a test.
 - For not-found / error flows navigate by location string, `UI.getCurrent().navigate("owners/999999")`, because the
@@ -197,16 +221,49 @@ the render path end-to-end.
 Interact through the tester wrapper:
 
 ```java
-test(find(TextField.class).withCaption("First Name").single()).setValue("Jane");
-test(find(Button.class).withText("Add Owner").single()).click();
-test(find(ComboBox.class).withCaption("Type").single()).selectItem("dog");
+test(find(TextField.class).
+
+withCaption("First Name").
+
+single()).
+
+setValue("Jane");
+
+test(find(Button.class).
+
+withText("Add Owner").
+
+single()).
+
+click();
+
+test(find(ComboBox.class).
+
+withCaption("Type").
+
+single()).
+
+selectItem("dog");
 ```
 
 Check validation state via the locator:
 
 ```java
-assertTrue(find(TextField.class).withCaption("Telephone").single().isInvalid());
-assertEquals("not found", find(TextField.class).withCaption("Last name").single().getErrorMessage());
+assertTrue(find(TextField.class).
+
+withCaption("Telephone").
+
+single().
+
+isInvalid());
+
+assertEquals("not found",find(TextField.class).
+
+withCaption("Last name").
+
+single().
+
+getErrorMessage());
 ```
 
 ## Scoping with `from()` vs. global `find()`
@@ -221,7 +278,13 @@ caption is unique in the view.
 
 ```java
 assertDoesNotThrow(
-        () -> find(Image.class).withPropertyValue(Image::getSrc, "images/pets.png").single(),
+        () ->
+
+find(Image .class).
+
+withPropertyValue(Image::getSrc, "images/pets.png").
+
+single(),
         "Expected exactly one decorative pets image");
 ```
 
@@ -229,7 +292,11 @@ assertDoesNotThrow(
 nothing:
 
 ```java
-assertTrue(find(Grid.class).all().isEmpty(), "Expected results grid to be hidden");
+assertTrue(find(Grid.class).
+
+all().
+
+isEmpty(), "Expected results grid to be hidden");
 ```
 
 ## No public test-only getters
@@ -254,7 +321,8 @@ Do **not** add public getters to view classes so tests can reach private fields 
   failure is uninformative.
 - **Never `.all().stream().anyMatch(...)`.** Chain the locator matchers instead — it's type-safe and the failure message
   is informative.
-- **Rendered-state assertions** go through `find(Paragraph.class)`, `find(H3.class)`, etc. and assert on `.getText()` so the
+- **Rendered-state assertions** go through `find(Paragraph.class)`, `find(H3.class)`, etc. and assert on `.getText()` so
+  the
   render path is exercised end-to-end.
 - **Navigation assertions** check
   `UI.getCurrent().getInternals().getActiveViewLocation().getPath()`, not domain state pulled back out of the view.

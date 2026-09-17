@@ -66,12 +66,15 @@ and a use case disagree, the use case wins:
 - [`docs/entity_model.md`](docs/entity_model.md) — the domain model as a Mermaid ER diagram
 - [`docs/use_cases.puml`](docs/use_cases.puml) — PlantUML use case diagram
 - [`docs/use_cases/`](docs/use_cases) — one specification per use case
+- [`docs/business_rules.md`](docs/business_rules.md) — the rules several use cases share, referenced by id from each of them
 - [`docs/test_cases/`](docs/test_cases) — end-to-end journeys spanning several use cases
-- [`docs/guidelines/`](docs/guidelines) — architecture and testing conventions the generated code must follow
+- [`docs/architecture/`](docs/architecture) — the 4+1 views (logical, process, development, physical), the code and
+  test conventions the generated code must follow, and the ADRs behind them
 
 The link between specs and code is enforced by tests: `UseCaseTraceabilityTest` checks that every `@UseCase` annotation points
-at a use case, flow, and business rule that really exists, and `TestCaseTraceabilityTest` does the same for the test
-cases.
+at a use case, flow, and business rule that really exists, `TestCaseTraceabilityTest` does the same for the test
+cases, and `BusinessRuleTraceabilityTest` keeps the shared business rules and the use cases that reference them in
+agreement.
 
 ## Running locally
 

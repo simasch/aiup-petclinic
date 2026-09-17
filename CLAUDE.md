@@ -17,38 +17,43 @@ something, read the relevant spec first:
 - `docs/use_cases/UC-NNN-*.md` — one file per use case with preconditions,
   main success scenario, alternative flows, postconditions, business rules.
   UI flows, field labels, and navigation come from these.
+- `docs/business_rules.md` — the rules several use cases share, as `GR-NNN`.
+  A use case's `BR-NNN` heading references one instead of restating it, so
+  follow the link before implementing that rule. A rule only one use case
+  needs stays in that use case; **no business rule belongs in
+  `docs/architecture/`**.
 - `docs/test_cases/TC-NNN-*.md` — end-to-end journeys spanning several use
   cases; each is verified by a Playwright `TC<NNN><Name>IT`.
+- `docs/architecture/` — the 4+1 views (logical, process, development,
+  physical), the code and test conventions, and the ADRs behind them. The use
+  cases say *what*, these say *how it is built*;
+  [`docs/architecture/README.md`](docs/architecture/README.md) says which
+  document answers which question.
 
-Two sensors (`./mvnw test`) enforce the link between specs and tests:
-`UseCaseTraceabilityTest` and `TestCaseTraceabilityTest`. Because of them a
+Three sensors (`./mvnw test`) enforce the links between the documents and the
+code: `UseCaseTraceabilityTest`, `TestCaseTraceabilityTest`, and
+`BusinessRuleTraceabilityTest` — the last one between `docs/business_rules.md`
+and the use cases that reference a `GR-NNN`. Because of the first two a
 `Status:` line (`Done`/`Tested` on a use case, `Automated` on a test case) is
 an assertion that switches the sensor on, not a label — never set one by hand
 without running `aiup-vaadin-jooq:coverage-check` first. What each sensor
 checks is in
-[`docs/guidelines/testing.md`](docs/guidelines/testing.md#the-traceability-sensors).
+[`docs/architecture/testing.md`](docs/architecture/testing.md#the-traceability-sensors).
 
 If a use case and the code disagree, the use case wins unless the user says
 otherwise.
 
 ## Stack
 
-- **Java 25**, **Spring Boot 4.1.1**, **Vaadin 25.2**
-- Application code lives under package `ai.unifiedprocess.petclinic`
-  (package-by-feature, see `docs/guidelines/architecture.md`).
-- **jOOQ** for type-safe SQL — generated sources live in
-  `target/generated-sources/jooq` under package
-  `ai.unifiedprocess.demo.petclinic.database` (note the extra `demo`
-  segment — it differs from the application package on purpose).
-- **Flyway** migrations in `src/main/resources/db/migration`
-  (`V1__initial_schema.sql` covers the full entity model; test-only seed
-  data lives in `src/test/resources/db/migration/V2__seed_reference_data.sql`)
-- **PostgreSQL** in prod; **Testcontainers** (`postgres:17-alpine`) for
-  tests *and* for jOOQ code generation at build time
-- **Vaadin Browserless Testing** (`browserless-test-junit6` + `browserless-test-spring`) for
-  server-side view tests; **Playwright + Drama Finder** for browser-based
-  integration tests (dependency added by the `playwright-test` skill when
-  the first `*IT` is written)
+**Java 25**, **Spring Boot 4.1.1**, **Vaadin Flow 25.2**, **jOOQ** on
+**PostgreSQL**, schema owned by **Flyway**, **Testcontainers** for tests and for
+jOOQ code generation. Application code lives under
+`ai.unifiedprocess.petclinic`, package by feature; generated jOOQ sources under
+`ai.unifiedprocess.demo.petclinic.database` (the extra `demo` segment is
+deliberate).
+
+The full table, with the decisions behind each choice, is in
+[`docs/architecture/development.md`](docs/architecture/development.md#technology-stack).
 
 ## Commands
 
@@ -89,47 +94,49 @@ you add or change a migration, jOOQ classes won't update until you re-run
 
 ## Coverage
 
-Coverage is what the SonarQube quality gate measures, and it spans *both*
-test layers. The JaCoCo agent runs in the Surefire JVM and the Failsafe JVM
-separately, writing `target/jacoco-ut.exec` and `target/jacoco-it.exec`;
-`post-integration-test` merges the two and writes the report Sonar reads at
-`target/site/jacoco-merged/jacoco.xml`. A line reached only by a Playwright
-`*IT` therefore still counts as covered — **don't add a browserless test just
-to cover something a `TC<NNN><Name>IT` already exercises.**
-
-Only `./mvnw verify` produces that report. `./mvnw test` runs the agent but
-stops before the merge, so it leaves no merged report behind — check coverage
-with `verify`, not `test`.
-
-Generated jOOQ sources are excluded from analysis (`sonar.exclusions`), so
-they neither help nor hurt the number. The gate wants 80% on new code; the
-hand-written code sits around 97%.
+Coverage spans **both** test layers and the two JaCoCo reports are merged, so a
+line reached only by a Playwright `*IT` counts as covered — **don't add a
+browserless test just to cover something a `TC<NNN><Name>IT` already
+exercises.** Only `./mvnw verify` produces the merged report. Details:
+[`docs/architecture/development.md`](docs/architecture/development.md#coverage).
 
 ## When to read the detailed guides
 
 - **Before implementing a use case** → read the corresponding
-  `docs/use_cases/UC-NNN-*.md` spec first. It defines preconditions, the
-  main success scenario, alternative flows, postconditions, business rules,
-  field labels, and navigation. The spec is the source of truth.
+  `docs/use_cases/UC-NNN-*.md` spec first, and follow every `GR-NNN` link in
+  its business rules into
+  [`docs/business_rules.md`](docs/business_rules.md). Together they define
+  preconditions, the main success scenario, alternative flows, postconditions,
+  business rules, field labels, and navigation. The spec is the source of
+  truth.
 
 - **Before implementing a use case, writing a view, adding a repository, or
   touching anything in `src/main/java/`** → read
-  [`docs/guidelines/architecture.md`](docs/guidelines/architecture.md)
-  first. It covers package layout, jOOQ mapping patterns, Vaadin view
-  conventions, the shell exception, form validation, error handling, and
-  the `*Repository` stereotype rule. Much of it is enforced by ArchUnit in
-  `ArchitectureTest` (`./mvnw test`) — if you change a convention there,
-  update the matching rule in the same commit.
+  [`docs/architecture/development.md`](docs/architecture/development.md)
+  first. It covers the stack, package layout, jOOQ mapping patterns, the
+  transaction boundary, Vaadin view conventions, the shell exception, form
+  validation, error handling, the `*Repository` stereotype rule, and the
+  build. Much of it is enforced by ArchUnit in `ArchitectureTest`
+  (`./mvnw test`) — if you change a convention there, update the matching
+  rule in the same commit.
+
+- **Before changing a transaction, a save path, or anything about how the
+  application behaves at runtime** → read
+  [`docs/architecture/process.md`](docs/architecture/process.md). It holds the
+  transaction rule (the repository is the boundary, never a view), the
+  check-then-act on duplicate pet names that the database backs up, and the
+  fact that nothing here is asynchronous — don't add a job, an event, or server
+  push that no use case asks for.
 
 - **Before writing or modifying any test under `src/test/java/`** → read
-  [`docs/guidelines/testing.md`](docs/guidelines/testing.md) first. It
+  [`docs/architecture/testing.md`](docs/architecture/testing.md) first. It
   covers `SpringBrowserlessTest`, the `UC<NNN><Name>Test` / `*IT` naming
   rule, the `@UseCase` annotation, `PetClinicTestBase`, seed-data
   conventions, locator patterns, the Playwright `*IT` layer, and what you
   must **not** do (no public test getters, no `assertNotNull` on fields, no
   field reach-in, no Karibu).
 
-Do not skip these. Both files are short and kept current — drift between
+Do not skip these. The files are short and kept current — drift between
 them and the code is a bug to fix, not a style preference to ignore.
 
 ## Skills available for this project
@@ -142,10 +149,10 @@ Prefer these over ad-hoc generation:
 - `aiup-vaadin-jooq:flyway-migration` — generate `V*.sql` from the entity
   model.
 - `aiup-vaadin-jooq:implement` — implement a use case end-to-end (view +
-  jOOQ queries). Already honours `docs/guidelines/architecture.md`.
+  jOOQ queries). Already honours `docs/architecture/development.md`.
 - `aiup-vaadin-jooq:browserless-test` — server-side Vaadin view tests
   (`SpringBrowserlessTest`, `find()` locators), named `UC<NNN><Name>Test`, run
-  by `./mvnw test`. Default for UC tests; see `docs/guidelines/testing.md`.
+  by `./mvnw test`. Default for UC tests; see `docs/architecture/testing.md`.
 - `aiup-vaadin-jooq:playwright-test` — browser-based tests with Drama
   Finder, named `UC<NNN><Name>IT` / `TC<NNN><Name>IT`, run by
   `./mvnw verify`. Use for test cases (TC-*) and journeys that need a real

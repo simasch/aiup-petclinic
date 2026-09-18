@@ -1,0 +1,41 @@
+# Use Case: View Welcome Page
+
+## Overview
+
+**Use Case ID:** UC-001   
+**Use Case Name:** View Welcome Page   
+**Primary Actor:** Visitor   
+**Goal:** Display the application's home page so the user can orient themselves and navigate to the main functional areas.   
+**Status:** Done
+
+## Preconditions
+
+
+## Main Success Scenario
+
+1. Visitor navigates to the root URL (`/`) of the PetClinic application.
+2. System renders the welcome page with the clinic logo, a decorative image, and the main navigation bar.
+3. Visitor sees navigation links for Home, Find Owners, Veterinarians, and Error.
+
+## Alternative Flows
+
+None. The welcome page is a static view with no data access and therefore no failure mode of its
+own; see Failure Postconditions below and UC-010.
+
+## Postconditions
+
+### Success Postconditions
+
+- Welcome page is rendered in the visitor's browser.
+- No application state is changed.
+
+### Failure Postconditions
+
+- The welcome page is not shown; the application error view is displayed instead (UC-010).
+- No application state is changed.
+
+## Business Rules
+
+### BR-001: Anonymous Access
+
+Realizes [GR-001: Anonymous Access](../business_rules.md#gr-001-anonymous-access).

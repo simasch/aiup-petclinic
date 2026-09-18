@@ -1,0 +1,105 @@
+# AI Unified Studio - AI-assisted generation.
+#
+# This file is created by the AI Unified Studio during the setup and should not be edited by
+# hand - the Studio compares it against its template and offers the update when the two
+# differ.
+#
+# The Studio triggers the workflow through workflow_dispatch. The work itself - running
+# the skill and providing the result as a pull request - lives in the reusable workflow
+# of the AI Unified Process marketplace; this file only receives the dispatch and passes it on. A new
+# skill or plugin arrives with the marketplace and does not change this file.
+name: AI Unified Process Generate
+
+# The correlation id is part of the run name so the Studio finds the run it triggered:
+# workflow_dispatch does not return a run id of its own. The run name has to be set
+# here - a called workflow cannot change it.
+run-name: AI Unified Process ${{ inputs.skill }} ${{ inputs.correlation_id }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      plugin:
+        description: Plugin the skill belongs to
+        required: true
+        # Free text rather than a choice: the reusable workflow checks plugin and skill
+        # against the catalogue of the marketplace before either reaches a prompt. A
+        # choice list here would pin the catalogue into every repository and force an
+        # update of this file for every new skill.
+        type: string
+      skill:
+        description: Skill to run
+        required: true
+        type: string
+      subject:
+        description: Artifact or use case id the skill applies to
+        required: false
+        type: string
+      artifact_locations:
+        # Empty while the repository keeps the AI Unified Process default paths; the
+        # Studio fills it with the configured locations otherwise, and the reusable
+        # workflow hands the value to the skill as part of its prompt.
+        description: Where the artifacts lie when the repository deviates from the defaults
+        required: false
+        default: ""
+        type: string
+      correlation_id:
+        description: Id of the run from the Studio
+        required: true
+        type: string
+      model:
+        # Pinned rather than left to Claude Code, whose default can move between
+        # releases: a run should cost and behave the same tomorrow as it does today.
+        # The Studio sends the value; the default only covers a dispatch by hand.
+        description: Model Claude Code runs with
+        required: false
+        default: claude-sonnet-5
+        type: string
+      max_turns:
+        # A document skill writes one artifact out of another and is done in a few
+        # dozen turns; code and tests need considerably more. The Studio sets the value
+        # to match the skill.
+        description: Upper limit of turns in Claude Code
+        required: false
+        default: "40"
+        type: string
+      timeout_minutes:
+        description: Upper limit of the run time in minutes
+        required: false
+        default: "30"
+        type: string
+
+# The called workflow runs with at most the permissions granted here.
+permissions:
+  contents: write
+  pull-requests: write
+  # The Claude Code action exchanges an OIDC token for its GitHub token; without this
+  # the run fails before the skill starts.
+  id-token: write
+
+# One run per repository; the Studio prevents parallel runs on its side as well.
+concurrency:
+  group: aiup-generate
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    # The tag is moved by the marketplace when the workflow evolves; the reference
+    # itself stays as it is, so this file does not change with it.
+    uses: ai-unified-process/marketplace/.github/workflows/aiup-generate.yml@v1
+    with:
+      plugin: ${{ inputs.plugin }}
+      skill: ${{ inputs.skill }}
+      subject: ${{ inputs.subject }}
+      artifact_locations: ${{ inputs.artifact_locations }}
+      correlation_id: ${{ inputs.correlation_id }}
+      model: ${{ inputs.model }}
+      max_turns: ${{ inputs.max_turns }}
+      timeout_minutes: ${{ inputs.timeout_minutes }}
+    # The secrets with the AI access stay in this repository and are passed through;
+    # the marketplace never holds them. Passed one by one instead of `secrets: inherit`:
+    # GitHub only inherits secrets into a called workflow of the same organization, and
+    # this repository usually lives elsewhere. One of the two is enough; the other stays
+    # empty and is ignored.
+    secrets:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}

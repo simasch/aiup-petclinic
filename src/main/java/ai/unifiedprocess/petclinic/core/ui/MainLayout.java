@@ -1,5 +1,7 @@
 package ai.unifiedprocess.petclinic.core.ui;
 
+import ai.unifiedprocess.petclinic.owner.ui.FindOwnersView;
+import ai.unifiedprocess.petclinic.vet.ui.VetsView;
 import ai.unifiedprocess.petclinic.welcome.ui.WelcomeView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -37,8 +39,8 @@ public class MainLayout extends AppLayout {
         addToNavbar(header);
 
         SideNavItem homeLink = new SideNavItem("Home", WelcomeView.class);
-        SideNavItem findOwnersLink = new SideNavItem("Find Owners", "owners/find");
-        SideNavItem vetsLink = new SideNavItem("Veterinarians", "vets");
+        SideNavItem findOwnersLink = new SideNavItem("Find Owners", FindOwnersView.class);
+        SideNavItem vetsLink = new SideNavItem("Veterinarians", VetsView.class);
         SideNavItem errorLink = new SideNavItem("Error", CrashView.class);
 
         SideNav sideNav = new SideNav();

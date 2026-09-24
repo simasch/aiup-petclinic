@@ -29,7 +29,7 @@
     </scm>
     <properties>
         <java.version>25</java.version>
-        <vaadin.version>25.2.7</vaadin.version>
+        <vaadin.version>25.2.8</vaadin.version>
         <jooq.version>3.21.8</jooq.version>
         <testcontainers-jooq-codegen-maven-plugin.version>1.0.0</testcontainers-jooq-codegen-maven-plugin.version>
         <archunit.version>1.5.0</archunit.version>
@@ -336,7 +336,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>build-helper-maven-plugin</artifactId>
-                        <version>3.6.1</version>
+                        <version>3.6.2</version>
                         <executions>
                             <execution>
                                 <id>add-generated-jooq-sources</id>

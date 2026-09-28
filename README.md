@@ -1,5 +1,8 @@
 # AIUP PetClinic
 
+> **This project has moved to [AI-Unified-Process/petclinic](https://github.com/AI-Unified-Process/petclinic).**
+> This repository is no longer maintained.
+
 A demo project accompanying a talk on **Spec-Driven Development with the AI Unified Process (AIUP)**.
 
 It revisits the classic [Spring PetClinic](https://github.com/spring-projects/spring-petclinic) sample, but built from

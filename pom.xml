@@ -29,11 +29,11 @@
     </scm>
     <properties>
         <java.version>25</java.version>
-        <vaadin.version>25.2.8</vaadin.version>
+        <vaadin.version>25.3.0</vaadin.version>
         <jooq.version>3.21.8</jooq.version>
         <testcontainers-jooq-codegen-maven-plugin.version>1.0.0</testcontainers-jooq-codegen-maven-plugin.version>
         <archunit.version>1.5.0</archunit.version>
-        <dramafinder.version>1.1.6</dramafinder.version>
+        <dramafinder.version>1.2.0</dramafinder.version>
         <jacoco.version>0.8.15</jacoco.version>
         <!-- The sensors profile below flips this: the traceability sensors and
              the ArchUnit rules read files and class files, not a database. -->
